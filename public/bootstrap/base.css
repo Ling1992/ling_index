@@ -10,6 +10,7 @@ body {
 
 .footer {
     /*position: sticky;*/
+    margin-top: 20px;
     bottom: 0;
     width: auto;
     /* Set the fixed height of the footer here */

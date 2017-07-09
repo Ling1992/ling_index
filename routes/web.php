@@ -13,9 +13,15 @@
 
 
 
-Route::group(['namespace' => 'Index'], function(){
+Route::group(['middleware' => 'ling_index','namespace' => 'Index'], function(){
     // 控制器在 "App\Http\Controllers\Index" 命名空间下
 
-    Route::get('/', 'IndexController@Index');
+    Route::get('/', ['uses'=>'IndexController@Index','as'=>'index']);
+    Route::get('category/{category}', function($category){
+        if ($category == 'new') {
+            return redirect()->route('index');
+        }
+        return 'index__'.$category;
+    });
 
 });

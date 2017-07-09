@@ -40,6 +40,10 @@ class Kernel extends HttpKernel
             'throttle:60,1',
             'bindings',
         ],
+
+        'ling_index' => [
+            \App\Http\Middleware\CheckMobile::class,
+        ],
     ];
 
     /**

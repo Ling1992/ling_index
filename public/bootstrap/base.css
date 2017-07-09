@@ -27,6 +27,11 @@ body {
 .navbar-wrapper .navbar .container {
     width: auto;
 }
+.navbar-brand {
+    color: black;
+    background-color: chartreuse;
+
+}
 
 .ling-navbar {
     border: 0 solid #e7e7e7;
@@ -173,5 +178,72 @@ body {
         margin-top: 20px;
         overflow: hidden;
         zoom: 1;
+    }
+}
+
+
+.index-sidebar{
+    display: none;
+}
+
+.index-main{
+    padding: 0;
+}
+
+.index-main .index-li{
+    /*max-height:;*/
+    margin:0;
+    border-bottom: 1px solid #f3f3f3;
+}
+
+.index-li img{
+    margin: 10px 0px;
+}
+.index-main .index-label{
+    margin: 10px 0px;
+}
+
+.index-main .index-p{
+    display: none;
+}
+.index-main .index-img{
+    width:33.33333333%;
+    position: relative;
+    float: left;
+}
+.index-main .index-info{
+    width:66.66666666%;
+    position: relative;
+    float: left;
+}
+.index-main .index-h{
+    font-size: 13px;
+}
+
+/* css for mobile */
+@media (min-width: 990px) {
+    .index-sidebar {
+        top: 51px;
+        bottom: 0;
+        left: 0;
+        z-index: 1000;
+        display: block;
+        padding: 20px;
+        overflow-x: hidden;
+        overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+        background-color: #f5f5f5;
+        border-right: 1px solid #eee;
+    }
+    .index-main .index-p{
+        display: block;
+    }
+    .index-main .index-img{
+        width:25%;
+    }
+    .index-main .index-info{
+        width:75%;
+    }
+    .index-main .index-h{
+        font-size: 20px;
     }
 }

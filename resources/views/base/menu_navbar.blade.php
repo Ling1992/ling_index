@@ -17,7 +17,10 @@
                             @if ($loop->iteration > 3)
                                 @break
                             @endif
-                            <li><a href="/category/{{ $k }}">{{ $v }}</a></li>
+                            <li @if($category == $k)
+                                    class="active"
+                                    @endif
+                                    ><a href="/category/{{ $k }}">{{ $v }}</a></li>
                         @endforeach
 
                         @if (count($category_menu) >= 3 )
@@ -29,7 +32,10 @@
                                             @if (($loop->iteration % 3) == 0)
                                                 <li role="separator" class="divider"></li>
                                             @endif
-                                            <li><a href="/category/{{ $k }}">{{ $v }}</a></li>
+                                            <li @if($category == $k)
+                                                    class="active"
+                                                    @endif
+                                            ><a href="/category/{{ $k }}">{{ $v }}</a></li>
                                         @endif
                                     @endforeach
                                 </ul>

@@ -50,7 +50,6 @@
 <div class="container">
     @include('base.footer')
 </div>
-
 <!-- Bootstrap core JavaScript
 ================================================== -->
 <!-- Placed at the end of the document so the pages load faster -->
@@ -59,5 +58,14 @@
 <script src="{{ asset('bootstrap/dist/js/bootstrap.min.js') }}"></script>
 <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
 <script src="{{ asset('bootstrap/assets/js/ie10-viewport-bug-workaround.js') }}"></script>
+<script src="{{ asset('js/echo.min.js') }}"></script>
+<script>
+    echo.init({
+        offset: 10,
+        throttle: 0
+    });
+</script>
+@section('js')
+@show
 </body>
 </html>

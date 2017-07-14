@@ -13,14 +13,9 @@
 
 function format_time($dt=0)
 {
-    \Illuminate\Support\Facades\Log::info('1111');
     $format = [
         'between_one_minute' => '刚刚',
         'before_minute'      => '分钟前',
-        'after_minute'       => '分钟后',
-        'today'              => 'H:i',
-        'yesterday'          => '昨天 H:i',
-        'tomorrow'           => '明天 H:i',
         'default'            => 'n月d日 H:i',
         'diff_year'             => 'Y年n月d日 H:i',
         'error'                 => '时间显示错误'
@@ -46,23 +41,15 @@ function format_time($dt=0)
         $diff_minute = floor(abs($now->timestamp - $dt->timestamp) / 60);
         $diff_second = $now->timestamp - $dt->timestamp;
 
-        //一小时内
+        //1小时内
         if($diff_minute < 60) {
 
             //一分钟内
             if($diff_second < 60 && $diff_second >= 0) return $format['between_one_minute'];
 
-            return $diff_second < 0 ? $diff_minute.$format['after_minute'] : $diff_minute.$format['before_minute'] ;
+            return $diff_minute.$format['before_minute'] ;
         }
-
-        return $dt->format($format['today']);
     }
-
-    //昨天
-    if( $dt->isYesterday() ) return $dt->format($format['yesterday']);
-
-    //明天
-    if( $dt->isTomorrow() ) return $dt->format($format['tomorrow']);
 
     //非今年，其他时间
     if( $dt->format('Y') !== $now->format('Y') ) return $dt->format($format['diff_year']);
@@ -82,7 +69,7 @@ function filterKey($str){
         $arr = explode("\n", $content);
         \Illuminate\Support\Facades\Cache::put('key_arr',$arr,60*24*2);
     }
-    foreach ($this->ling as $v) {
+    foreach ($arr as $v) {
         if ($v == '') continue;
         if(strpos($str,$v)!==false ){
             $str = str_replace($v,str_pad('',mb_strlen($v),'*'),$str);
@@ -91,8 +78,44 @@ function filterKey($str){
     return $str;
 }
 function filterContent($content) {
+    $content = preg_replace('/src="([^"]+)/i', 'src="'.public_path('img/onload.gif').'" data-echo="'.env('img_src_pre','').'\1', $content);
     $content = filterKey($content);
-    $content = preg_replace('/data-src="([^"]+)/i', 'src="/static/theme1/img/blank.gif" data-echo="http://read.html5.qq.com/image?src=forum&q=5&r=0&imgflag=7&imageUrl=\1', $content);
     // $content = str_replace(['data-src'], ['src'], $content);
     return strip_tags($content, "<p><img><iframe>");
+}
+
+function filterTitle($id, $content){
+    $title = $content;
+    if ($content) {
+        $title = \Illuminate\Support\Facades\Cache::get('title_'.$id);
+        if (!$title) {
+            $title = filterKey($content);
+            \Illuminate\Support\Facades\Cache::put('title_'.$id,$title,60*24*2);
+        }
+    }
+    return $title;
+}
+
+function filterAbstract($id, $content) {
+    $abstract = $content;
+    if ($content) {
+        $abstract = \Illuminate\Support\Facades\Cache::get('abstract_'.$id);
+        if (!$abstract) {
+            $abstract = filterKey($content);
+            \Illuminate\Support\Facades\Cache::put('abstract_'.$id,$abstract,60*24*2);
+        }
+    }
+    return $abstract;
+}
+
+function filterArticle($id, $content) {
+    $article = $content;
+    if ($content) {
+        $article = \Illuminate\Support\Facades\Cache::get('article_'.$id);
+        if (!$article) {
+            $article = filterContent($content);
+            \Illuminate\Support\Facades\Cache::put('article_'.$id,$article,60*24*2);
+        }
+    }
+    return $article;
 }

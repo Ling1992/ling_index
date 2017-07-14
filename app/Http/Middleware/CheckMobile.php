@@ -15,7 +15,7 @@ class CheckMobile
      */
     public function handle($request, Closure $next)
     {
-        if (isMobile()) {
+        if (false) {
             $request->offsetSet('ling','测试');
             return $next($request);
         }

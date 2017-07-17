@@ -13,29 +13,29 @@
                 </div>
                 <div id="navbar" class="navbar-collapse collapse">
                     <ul class="nav navbar-nav">
-                        @foreach ($category_menu as $k=>$v)
+                        @foreach ($category_menu as $c)
                             @if ($loop->iteration > 3)
                                 @break
                             @endif
-                            <li @if($category == $k)
+                            <li @if($category == $c->word)
                                     class="active"
                                     @endif
-                                    ><a href="/category/{{ $k }}">{{ $v }}</a></li>
+                                    ><a href="/category/{{ $c->word }}">{{ $c->name }}</a></li>
                         @endforeach
 
                         @if (count($category_menu) >= 3 )
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">更多 <span class="caret"></span></a>
                                 <ul class="dropdown-menu">
-                                    @foreach ($category_menu as $k=>$v)
+                                    @foreach ($category_menu as $c)
                                         @if ($loop->iteration > 3)
                                             @if (($loop->iteration % 3) == 0)
                                                 <li role="separator" class="divider"></li>
                                             @endif
-                                            <li @if($category == $k)
+                                            <li @if($category == $c->word)
                                                     class="active"
                                                     @endif
-                                            ><a href="/category/{{ $k }}">{{ $v }}</a></li>
+                                            ><a href="/category/{{ $c->word }}">{{ $c->name }}</a></li>
                                         @endif
                                     @endforeach
                                 </ul>

@@ -22,17 +22,9 @@ Route::group(['middleware' => 'ling_index','namespace' => 'Index'], function(){
         return redirect()->route('index');
     });
 
-    Route::get('category/article/{id}', function($id){
-        return redirect()->route('article',$id);
-    })->where('id', '[0-9]+');
-
-
     Route::get('category/{category}','IndexController@category')->where('category','[a-z_]{3,}');
-
-
-
 
     Route::get('article/{id}',['uses'=>'IndexController@article','as'=>'article'])->where('id', '[0-9]+');
 });
 
-Route::get('/test', 'Index\IndexController@test');
+//Route::get('/test', 'Index\IndexController@test');

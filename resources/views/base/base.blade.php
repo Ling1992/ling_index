@@ -61,7 +61,7 @@
 <script src="{{ asset('js/echo.min.js') }}"></script>
 <script>
     echo.init({
-        offset: 10,
+        offset: 0,
         throttle: 0
     });
 </script>

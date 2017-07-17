@@ -10,7 +10,6 @@ namespace App\Http\Controllers\Index;
 
 
 use App\Http\Controllers\Controller;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
@@ -18,64 +17,121 @@ use Illuminate\Support\Facades\Log;
 
 class IndexController extends Controller
 {
-    const CATEGORY_MENU=[
-        'new'=>'推荐',
-        'entertainment'=>'娱乐',
-        'sports'=>'体育',
-        'finance'=>'经济',
-        'technology'=>'科技',
-        'society'=>'社会',
-        'international'=>'国际',
-        'funny'=>'搞笑',
-        'pic_text'=>'图文',
-        'game'=>'游戏',
-        'regimen'=>'养生',
-        'story'=>'故事',
-        'other'=>'其他'];
+    protected $category;
+    protected $recommendation;
+    /**
+     * IndexController constructor.
+     */
+    public function __construct()
+    {
+        // 菜单导航 列表
+        $this->category = Cache::get('category');
+        if (!$this->category) {
+            $this->category = DB::table('index_article_category')->orderBy('sort')->get();
+            Cache::put('category',$this->category, 60*12);  // 12小时
+            Log::info('1');
+        }
+        // 阅读推荐
+        $this->recommendation = Cache::get('recommendation');
+        if (!$this->recommendation) {
+            // 首页 category 详细列表
+            $category_index_list= Cache::get('category_index_list');
+            if (!$category_index_list) {
+                $category_index_list = DB::table('relation_category')->where('index_id','=', 1)->pluck('category_id');
+                Cache::put('category_index_list',$category_index_list,60*12);
+                Log::info('2');
+            }
+            $this->recommendation = DB::table('toutiao_article_list')
+                ->whereIn('category_id',$category_index_list?:[])
+                ->orderBy('create_date','desc')
+                ->limit(5)
+                ->get();
+            Cache::put('recommendation',$this->recommendation, 60*12);
+            Log::info('3');
+        }
+
+    }
 
     function index(Request $request){
 
         $input = $request->all();
-
         Log::info('ling', $input);
 
-        $page_ = $request->input('page', '0');
-//        $article_list = Cache::get('article_list_'.$page_);
-//        if (!$article_list) {
-            $article_list = DB::table('toutiao_article_list')->orderBy('create_date','desc')->paginate(20);
-//            Cache::put('article_list_'.$page_,$article_list, 5);
-//            Log::info('set---> article_list cache');
-//        }
+        // 首页 category 详细列表
+        $category_index_list= Cache::get('category_index_list');
+        if (!$category_index_list) {
+            $category_index_list = DB::table('relation_category')->where('index_id','=', 1)->pluck('category_id');
+            Cache::put('category_index_list',$category_index_list,60*12);
+            Log::info('4');
+        }
+
+        $page_ = $request->input('page', '1');
+        // 首页 第N页数据
+        $article_list = Cache::get('article_index_list_'.$page_);
+        if (!$article_list) {
+            $article_list = DB::table('toutiao_article_list as a')
+                ->leftJoin('toutiao_article_category as b', 'a.category_id','=','b.category_id')
+                ->whereIn('a.category_id',$category_index_list?:[])
+                ->orderBy('a.create_date','desc')
+                ->paginate(20);
+            Cache::put('article_index_list_'.$page_,$article_list, 5);
+            Log::info('5');
+        }
+
+        // 获取 首页 index_category 名称
+        $category_index_word = Cache::get('category_index_word');
+        if (!$category_index_word) {
+            $category_index_word = DB::table('index_article_category')->where('category_index_id','=', '1')->value('word');
+            Cache::put('category_index_word',$category_index_word,60*12);
+            Log::info('6');
+        }
+
         return view('Index.index')
-            ->with('category_menu',self::CATEGORY_MENU)  //菜单栏
+            ->with('category_menu',$this->category)  //菜单栏
             ->with('list',$article_list)
-            ->with('category','new')
+            ->with('category',$category_index_word)
+            ->with('recommendation', $this->recommendation)
             ;
     }
     function category($category, Request $request){
+
         $input = $request->all();
-
         Log::info('ling', $input);
+        // category 详细列表
+        $category_list= Cache::get("category_{$category}_list");
+        if (!$category_list) {
+            $category_list = DB::table('relation_category as a')
+                ->leftJoin('index_article_category as b', 'a.index_id','=','b.category_index_id')
+                ->where('b.word','=', $category)
+                ->pluck('a.category_id');
+            Cache::put("category_{$category}_list",$category_list,60*12);
+            Log::info('7');
+        }
+        $page_ = $request->input('page', '1');
+        // 第N页数据
+        $article_list = Cache::get("category_{$category}_list_$page_");
+        if (!$article_list) {
+            $article_list = DB::table('toutiao_article_list as a')
+                ->leftJoin('toutiao_article_category as b', 'a.category_id','=','b.category_id')
+                ->whereIn('a.category_id',$category_list?:[])
+                ->orderBy('a.create_date','desc')
+                ->paginate(20);
+            Cache::put("category_{$category}_list_$page_",$article_list, 5);
+            Log::info('8');
+        }
 
-        $page_ = $request->input('page', '0');
-//        $article_list = Cache::get('article_list_'.$page_);
-//        if (!$article_list) {
-        $article_list = DB::table('toutiao_article_list')->orderBy('create_date','desc')->paginate(20);
-//            Cache::put('article_list_'.$page_,$article_list, 5);
-//            Log::info('set---> article_list cache');
-//        }
         return view('Index.index')
-            ->with('category_menu',self::CATEGORY_MENU)  //菜单栏
+            ->with('category_menu', $this->category)  //菜单栏
             ->with('list',$article_list)
             ->with('category',$category)
+            ->with('recommendation', $this->recommendation)
             ;
     }
 
     function article($id){
 
-//        $id = $request->input('index_id', '0');
-//        $article = Cache::get('article_l_'.$article_id);
-//        if (!$article) {
+        $data = Cache::get('article_l_'.$id);
+        if (!$data) {
             $data = DB::table('toutiao_article_list as a')
                 ->leftJoin('toutiao_author as b', 'b.author_id', '=', 'a.author_id')
                 ->leftJoin('toutiao_article_category as c', 'c.category_id', '=', 'a.category_id')
@@ -87,25 +143,26 @@ class IndexController extends Controller
             $article = DB::table("toutiao_article_0{$data->article_table_tag}")->where('id',$data->article_id)->first();
             abort_if(!$article,404, 'not found article ');
             $data->article=filterArticle($id,$article->article);
-//            Cache::put('article_l_'.$article,$article, 60*24*2);
-//        }
+            Cache::put('article_l_'.$id,$data, 60*24*2);
+        }
         return view('Index.article')
-            ->with('category_menu',self::CATEGORY_MENU)  //菜单栏;
+            ->with('category_menu',$this->category)  //菜单栏;
             ->with('data',$data)
             ->with('category',$data->category_name)
+            ->with('recommendation', $this->recommendation)
             ;
     }
 
     function test(){
-        $str = '2017-07-14 14:00:00.00';
-
-        $dt = Carbon::parse($str);
-        $now = Carbon::now();
-
-        echo $dt;
-        echo PHP_EOL;
-        echo $now;
-        echo PHP_EOL;
-        echo $now->diffInMinutes($dt);
+        $category_list = DB::table('relation_category as a')
+            ->leftJoin('index_article_category as b', 'a.index_id','=','b.category_index_id')
+            ->where('b.word','=', 'entertainment')
+            ->pluck('a.category_id');
+        $article_list = DB::table('toutiao_article_list as a')
+            ->leftJoin('toutiao_article_category as b', 'a.category_id','=','b.category_id')
+            ->whereIn('a.category_id',$category_list?:[])
+            ->orderBy('a.create_date','desc')
+            ->paginate(20);
+        dd($article_list);
     }
 }

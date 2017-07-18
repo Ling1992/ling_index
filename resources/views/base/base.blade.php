@@ -34,15 +34,17 @@
 </head>
 <body>
 @include('base.menu_navbar')
-<div class="container ling-container">
+<div class="container ling-container ling-container-main">
 
     <div class="row">
 
-        <div class="col-sm-8">
+        <div class="col-sm-8 ling-main">
             @section('content')
             @show
         </div> <!-- article_list -main -->
-        @include('base.about_siderbar')
+        <div class="col-sm-4 index-sidebar">
+            @include('base.about_siderbar')
+        </div><!-- /.blog-sidebar -->
     </div><!-- /.row -->
 
 </div><!-- /.container -->
@@ -62,7 +64,7 @@
 <script>
     echo.init({
         offset: 0,
-        throttle: 0
+        throttle: 2
     });
 </script>
 @section('js')

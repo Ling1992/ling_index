@@ -123,6 +123,9 @@ body {
     font-size: 20px;
 }
 
+.page-ling{
+    display: none;
+}
 /* RESPONSIVE CSS
 -------------------------------------------------- */
 
@@ -233,6 +236,9 @@ body {
     .blog-post-title {
         margin-bottom: 5px;
         font-size: 30px;
+    }
+    .page-ling {
+        display: block;
     }
 }
 

@@ -28,7 +28,9 @@
             @endforeach
         </ul>
     </div> <!-- ling-list-box -->
-    {{ $list->links('vendor/pagination/bootstrap-4') }}
+    <div>
+        {{ $list->links('vendor/pagination/bootstrap-4') }}
+    </div>
 @endsection
 
 @section('js')

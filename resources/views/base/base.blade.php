@@ -32,12 +32,25 @@
     <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
     <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
+
+    <style type="text/css">
+        a:link {
+            color: #0000cb;
+            text-decoration: none;
+        }
+        a:visited {
+            color: #4b1689;
+        }
+        a:hover {
+            color: #999999;
+        }
+    </style>
 </head>
 <body>
 @include('base.menu_navbar')
 <div class="container ling-container ling-container-main">
 
-    <div class="row">
+    <div class="row" style="margin: 0;">
 
         <div class="col-sm-8 ling-main">
             @section('content')

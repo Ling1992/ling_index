@@ -9,13 +9,13 @@
                 <li>
                     @if($l->image_url)
                         <div class="ling-img-box">
-                            <a target="_blank" href="/article/{{ $l->id }}" class="thumbnail">
+                            <a href="/article/{{ $l->id }}" class="thumbnail">
                                 <img src="{{ asset('img/blank.gif') }}" data-echo="{{ env('img_src_pre','').$l->image_url }}">
                             </a>
                         </div>
                     @endif
                     <div class="ling-txt-box">
-                        <h3><a target="_blank" href="/article/{{ $l->id }}">{{ filterTitle($l->id,$l->title) }}</a></h3>
+                        <h3><a class="btn-link" href="/article/{{ $l->id }}">{{ filterTitle($l->id,$l->title) }}</a></h3>
                         <p class="abstract">{{ filterAbstract($l->id,$l->abstract) }}</p>
                         <div class="tips">
                             {{--<a style="float:left; margin-right:30px">作者</a>--}}

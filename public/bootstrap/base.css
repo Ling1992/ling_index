@@ -35,6 +35,7 @@ body {
 
 .ling-navbar {
     border: 0 solid #e7e7e7;
+    background-color: greenyellow;
 }
 
 .ling-container{
@@ -74,7 +75,8 @@ body {
     position: relative;
     float: left;
     margin: 20px 20px 20px 00px;
-    width: 140px;
+    /*width: 140px;*/
+    width: 37%;
     height: 105px;
     overflow: hidden;
 }
@@ -94,7 +96,10 @@ body {
     zoom: 1;
 }
 .ling-txt-box h3 {
-    font-size: 16px;line-height: 23px; margin: 0; padding: 0;
+    font-size: 15px;
+    line-height: 17px;
+    margin: 0;
+    padding: 0;
 }
 .abstract {
     display: none;
@@ -151,6 +156,7 @@ body {
 
     .ling-navbar {
         border: 1px solid #e7e7e7;
+        background-color: greenyellow;
     }
 
     .ling-container {

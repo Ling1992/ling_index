@@ -3,7 +3,7 @@
     <h4>阅读推荐</h4>
     <ol class="list-unstyled">
         @foreach($recommendation as $r)
-            <li class="row">
+            <li class="row" style="margin: 0;">
                 @if($r->image_url)
                     <div class="col-sm-4" style="padding: 0;margin: 0">
                         <a target="_blank" href="/article/{{ $r->id }}" class="thumbnail">
@@ -17,7 +17,7 @@
                         </div>
                     </div>
                 @else
-                    <div class="row">
+                    <div class="row" style="margin: 0;">
                         <span><a target="_blank" href="/article/{{ $r->id }}">{{ filterTitle($r->id,$r->title) }}</a></span>
                         <div class="">
                             <p>{{ format_time($r->create_date) }}</p>

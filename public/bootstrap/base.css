@@ -119,6 +119,7 @@ body {
     padding-left: 15px;
     box-sizing: border-box;
     display: block;
+    background-color: #f0f0f0;
 }
 .ling-main img {
     max-width: 100%;
@@ -175,6 +176,7 @@ body {
         padding-left: 15px;
         box-sizing: border-box;
         display: block;
+        background-color: #f0f0f0;
     }
     .ling-content-box {
         width: 66.66666667%;

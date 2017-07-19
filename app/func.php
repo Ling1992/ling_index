@@ -78,7 +78,7 @@ function filterKey($str){
     return $str;
 }
 function filterContent($content) {
-    $content = preg_replace('/src="([^"]+)/i', 'src="'.public_path('img/onload.gif').'" data-echo="'.env('img_src_pre','').'\1', $content);
+    $content = preg_replace('/src="([^"]+)/i', 'src="'.asset('img/onload.gif').'" data-echo="'.env('img_src_pre','').'\1', $content);
     $content = filterKey($content);
     // $content = str_replace(['data-src'], ['src'], $content);
     return strip_tags($content, "<p><img><iframe>");

@@ -14,8 +14,8 @@ class Kernel extends HttpKernel
      * @var array
      */
     protected $middleware = [
-        \Illuminate\Foundation\Http\Middleware\CheckForMaintenanceMode::class,
-        \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
+        \Illuminate\Foundation\Http\Middleware\CheckForMaintenanceMode::class, //维护使用 php artisan down&up
+        \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,  //
         \App\Http\Middleware\TrimStrings::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
     ];
@@ -43,6 +43,7 @@ class Kernel extends HttpKernel
 
         'ling_index' => [
             \App\Http\Middleware\CheckMobile::class,
+            \App\Http\Middleware\TestMiddleware::class,
         ],
     ];
 

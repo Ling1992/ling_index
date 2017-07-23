@@ -46,7 +46,7 @@
         }
     </style>
 </head>
-<body>
+<body style="background-color: #f0f0f0;">
 @include('base.menu_navbar')
 <div class="container ling-container ling-container-main">
 

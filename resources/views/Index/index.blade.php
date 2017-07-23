@@ -9,8 +9,8 @@
                 <li>
                     @if($l->image_url)
                         <div class="ling-img-box">
-                            <a href="/article/{{ $l->id }}" class="thumbnail">
-                                <img src="{{ asset('img/blank.gif') }}" data-echo="{{ env('img_src_pre','').$l->image_url }}" style="background:#ccc  no-repeat center center">
+                            <a href="/article/{{ $l->id }}">
+                                <img src="{{ asset('img/blank.gif') }}" data-echo="{{ env('img_src_pre','').$l->image_url }}" style="background:#ccc  no-repeat center center" class="img-rounded">
                             </a>
                         </div>
                     @endif
@@ -18,10 +18,13 @@
                         <h3><a class="btn-link" href="/article/{{ $l->id }}">{{ filterTitle($l->id,$l->title) }}</a></h3>
                         <p class="abstract">{{ filterAbstract($l->id,$l->abstract) }}</p>
                         <div class="tips">
-                            {{--<a style="float:left; margin-right:30px">作者</a>--}}
+                            <p style="float:left; margin-right:10px">
+                                <a >作者</a>
+                            </p>
                             {{--<a style="float:left; margin-right:30px">{{ $l->name }}</a>--}}
-                            <p style="float:left; margin-right:20px; color: black;">{{ $l->name }}</p>
-                            <p style="float: left">{{ format_time($l->create_date) }}</p>
+                            <p style="float:left; margin-right:10px; color: black;">{{ $l->name }}</p>
+                            <p style="float: left; margin-right:10px;">{{ format_time($l->create_date) }}</p>
+                            <p style="float: left;"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> 1213</p>
                         </div>
                     </div>
                 </li>

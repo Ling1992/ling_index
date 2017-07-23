@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use Illuminate\Support\Facades\Log;
 
 class CheckMobile
 {
@@ -15,11 +16,14 @@ class CheckMobile
      */
     public function handle($request, Closure $next)
     {
-        if (false) {
-            $request->offsetSet('ling','测试');
-            return $next($request);
-        }
+//        if (false) {
+//            $request->offsetSet('ling','测试');
+//            return $next($request);
+//        }
         $request->offsetSet('ling','开始');
-        return $next($request);
+        Log::info('before  CheckMobile');
+        $response =  $next($request);
+        Log::info('after CheckMobile');
+        return $response;
     }
 }

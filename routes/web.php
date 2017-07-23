@@ -28,3 +28,5 @@ Route::group(['middleware' => 'ling_index','namespace' => 'Index'], function(){
 });
 
 //Route::get('/test', 'Index\IndexController@test');
+
+//Route::group()

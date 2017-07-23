@@ -43,6 +43,7 @@ body {
 }
 .ling-container-main{
     margin-top: 60px;
+    padding:2px;
 }
 
 /* article list image title desc time .. */
@@ -74,10 +75,12 @@ body {
 .ling-list-box .ling-img-box {
     position: relative;
     float: left;
-    margin: 20px 20px 20px 00px;
+    margin: 12px 10px 12px 0px;
     /*width: 140px;*/
     width: 37%;
-    height: 105px;
+    height:auto;
+    max-height: 105px;
+    /*height:205px;*/
     overflow: hidden;
 }
 
@@ -87,12 +90,14 @@ body {
 }
 .ling-img-box img {
     width:100%;
-    height:100%;
+    height:auto;
+    max-height: 100%;
 }
 .ling-list-box .ling-txt-box {
-    margin-top: 20px;
+    margin-top: 15px;
     overflow: hidden;
-    min-height: 100px;
+    /*max-height: 150px;*/
+    /*min-height: 100px;*/
     zoom: 1;
 }
 .ling-txt-box h3 {
@@ -100,12 +105,20 @@ body {
     line-height: 17px;
     margin: 0;
     padding: 0;
+    margin-bottom: 40px;
 }
 .abstract {
     display: none;
 }
 .tips {
-    margin-bottom: 10px;overflow:hidden;zoom:1; position:absolute; bottom:0px;
+    margin-bottom: 0px;
+    overflow:hidden;
+    zoom:1;
+    position:absolute;
+    bottom:0px;
+}
+.tips p{
+    font-size: 10px;
 }
 .ling-article {
     position: relative;
@@ -115,11 +128,11 @@ body {
     width: 100%;
     position: relative;
     min-height: 1px;
-    padding-right: 15px;
-    padding-left: 15px;
+    padding-right: 5px;
+    padding-left: 5px;
     box-sizing: border-box;
     display: block;
-    background-color: #f0f0f0;
+    background-color: #ffffff;
 }
 .ling-main img {
     max-width: 100%;
@@ -165,6 +178,7 @@ body {
     }
     .ling-container-main{
         margin-top: 0px;
+        padding: 0 15px;
     }
 
     .ling-main {
@@ -176,7 +190,7 @@ body {
         padding-left: 15px;
         box-sizing: border-box;
         display: block;
-        background-color: #f0f0f0;
+        background-color: #ffffff;
     }
     .ling-content-box {
         width: 66.66666667%;
@@ -224,7 +238,7 @@ body {
     }
     .ling-img-box img {
         width:100%;
-        height:100%;
+        height: 100%;
     }
     .ling-list-box .ling-txt-box {
         margin-top: 20px;
@@ -232,14 +246,23 @@ body {
         zoom: 1;
     }
     .ling-txt-box h3 {
-        font-size: 22px;line-height: 30px; margin: 0; padding: 0;
+        font-size: 22px;
+        line-height: 30px;
+        margin: 0;
+        padding: 0;
     }
     .abstract {
         display: block;
         color: #888;height: 48px;overflow: hidden;padding-top: 6px;
     }
     .tips {
-        margin-bottom: auto;overflow:auto;zoom:1; position:relative;
+        margin-bottom: auto;
+        overflow:auto;
+        zoom:1;
+        position:relative;
+    }
+    .tips p{
+        font-size: 14px;
     }
     .blog-post-title {
         margin-bottom: 5px;

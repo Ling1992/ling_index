@@ -43,7 +43,7 @@ class Kernel extends HttpKernel
 
         'ling_index' => [
             \App\Http\Middleware\CheckMobile::class,
-            \App\Http\Middleware\TestMiddleware::class,
+           // \App\Http\Middleware\TestMiddleware::class,
         ],
     ];
 

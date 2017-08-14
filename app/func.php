@@ -16,8 +16,13 @@ function format_time($dt=0)
     $format = [
         'between_one_minute' => '刚刚',
         'before_minute'      => '分钟前',
+        'before_hours'      => '小时前',
+        'before_day'      => '天前',
+        'before_month'      => '月前',
         'default'            => 'n月d日 H:i',
-        'diff_year'             => 'Y年n月d日 H:i',
+        'month_day'            => 'n月d日',
+        'diff_year_date'             => 'Y年n月d日 H:i',
+        'year'             => 'Y年',
         'error'                 => '时间显示错误'
     ];
 
@@ -32,30 +37,36 @@ function format_time($dt=0)
 
         $dt = new Carbon\Carbon($dt);
     }
-
-    $now = \Carbon\Carbon::now();
-
+//    return $dt->format($format['diff_year_date']);
     //今天
     if( $dt->isToday() ) {
 
-        $diff_minute = floor(abs($now->timestamp - $dt->timestamp) / 60);
-        $diff_second = $now->timestamp - $dt->timestamp;
+        $diff_second = abs ($dt->diffInSeconds() );
+        $diff_minute = floor($diff_second / 60);
 
         //1小时内
         if($diff_minute < 60) {
 
             //一分钟内
-            if($diff_second < 60 && $diff_second >= 0) return $format['between_one_minute'];
+            if($diff_second < 60) return $format['between_one_minute'];
 
             return $diff_minute.$format['before_minute'] ;
+        }else {
+            $diff_hour = floor($diff_minute / 60);
+
+            return $diff_hour . $format['before_hours'];
         }
     }
 
-    //非今年，其他时间
-    if( $dt->format('Y') !== $now->format('Y') ) return $dt->format($format['diff_year']);
+    if ($dt->isCurrentMonth()) {
+        return $dt->diffInDays() . $format['before_day'];
+    }
+    if ($dt->isCurrentYear()) {
+        return $dt->format($format['month_day']);
+    }
 
-    //今年，其他时间
-    return $dt->format($format['default']);
+    return $dt->format($format['year']);
+
 
 }
 

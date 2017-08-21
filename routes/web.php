@@ -29,6 +29,6 @@ Route::group(['middleware' => 'ling_index','namespace' => 'Index'], function(){
 
 //Route::get('/test', 'Index\IndexController@test');
 
-Route::get('/image/{width}/{height}', 'Index\ImageController@image')->where(['width' => '[0-9]+', 'height' => '[0-9]+']);
+Route::get('/image/{width}/{height}', 'Index\ImageController@index')->where(['width' => '[0-9]+', 'height' => '[0-9]+']);
 
 //Route::group()

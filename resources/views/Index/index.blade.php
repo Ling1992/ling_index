@@ -2,6 +2,12 @@
 
 @section('title','首页')
 
+@section('breadcrumb')
+    <ol class="breadcrumb breadcrumb-ling">
+        <li><a href="/">首页</a></li>
+        <li class="active">{{ $category_name }}</li>
+    </ol>
+@endsection
 @section('content')
     <div class="ling-list-box">
         <ul class="ling-list">
@@ -10,7 +16,7 @@
                     @if($l->image_url)
                         <div class="ling-img-box">
                             <a href="/article/{{ $l->id }}">
-                                <img src="{{ asset('img/blank.gif') }}" data-echo="{{ env('img_src_pre','').$l->image_url }}" style="background:#ccc  no-repeat center center" class="img-rounded">
+                                <img src="{{ asset('img/blank.gif') }}" data-echo="{{ env('img_src_pre','').urlFilter($l->image_url) }}" style="background:#ccc  no-repeat center center" class="img-rounded">
                             </a>
                         </div>
                     @endif
@@ -19,12 +25,12 @@
                         <p class="abstract">{{ filterAbstract($l->id,$l->abstract) }}</p>
                         <div class="tips">
                             <p style="float:left; margin-right:10px">
-                                <a >作者</a>
+                                {{--<a >作者</a>--}}
                             </p>
                             {{--<a style="float:left; margin-right:30px">{{ $l->name }}</a>--}}
                             <p style="float:left; margin-right:10px; color: black;">{{ $l->name }}</p>
                             <p style="float: left; margin-right:10px;">{{ format_time($l->create_date) }}</p>
-                            <p style="float: left;"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> 1213</p>
+                            {{--<p style="float: left;"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> 1213</p>--}}
                         </div>
                     </div>
                 </li>

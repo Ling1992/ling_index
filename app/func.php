@@ -130,3 +130,10 @@ function filterArticle($id, $content) {
     }
     return $article;
 }
+
+function urlFilter($url, $type=0){
+    if (strpos($url,'//') === 0) {
+        return "http:".$url;
+    }
+    return $url;
+}

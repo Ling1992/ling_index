@@ -2,12 +2,6 @@
 
 @section('title','首页')
 
-@section('breadcrumb')
-    <ol class="breadcrumb breadcrumb-ling">
-        <li><a href="/">首页</a></li>
-        <li class="active">{{ $category_name }}</li>
-    </ol>
-@endsection
 @section('content')
     <div class="ling-list-box">
         <ul class="ling-list">

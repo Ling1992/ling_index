@@ -24,7 +24,7 @@
                     @if($l->image_url)
                         <div class="ling-img-box">
                             <a href="/article/{{ $l->id }}" class="thumbnail">
-                                <img src="{{ asset('img/blank.gif') }}" data-echo="{{ env('img_src_pre','').$l->image_url }}" style="background:#ccc  no-repeat center center">
+                                <img src="{{ asset('img/blank.gif') }}" data-echo="{{ env('img_src_pre','').urlFilter($l->image_url) }}" style="background:#ccc  no-repeat center center">
                             </a>
                         </div>
                     @endif

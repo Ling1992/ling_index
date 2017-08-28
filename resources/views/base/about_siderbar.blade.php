@@ -7,7 +7,7 @@
                 @if($r->image_url)
                     <div class="col-sm-4" style="padding: 0;margin: 0">
                         <a target="_blank" href="/article/{{ $r->id }}" class="thumbnail">
-                            <img src="{{ asset('img/blank.gif') }}" data-echo="{{ env('img_src_pre','').$r->image_url }}">
+                            <img src="{{ asset('img/blank.gif') }}" data-echo="{{ env('img_src_pre','').urlFilter($r->image_url) }}">
                         </a>
                     </div>
                     <div class="col-sm-8">

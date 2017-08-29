@@ -27,7 +27,7 @@
                         @if (count($category_menu) >= 3 )
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">更多 <span class="caret"></span></a>
-                                <ul class="dropdown-menu" style="background-color: palegreen">
+                                <ul class="dropdown-menu" style="background-color: #4a4a4a">
                                     @foreach ($category_menu as $c)
                                         @if ($loop->iteration > 3)
                                             @if (($loop->iteration % 3) == 0)

@@ -1,6 +1,25 @@
 @extends('base.base')
 
-@section('title','首页')
+@section('title')
+    {{ filterTitle($data->id,$data->title) }}
+    -
+    @parent
+@endsection
+
+
+@section('breadcrumb')
+    <ol class="breadcrumb breadcrumb-ling">
+
+        @if($category && $category != 'new')
+            <li><a href="/">首页</a></li>
+            <li><a href="/category/{{ $category }}">{{ $category_list[$category] }}</a></li>
+            <li class="active">正文</li>
+        @else
+            <li class="active">XX</li>
+        @endif
+    </ol>
+@endsection
+
 
 @section('content')
 

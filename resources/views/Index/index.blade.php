@@ -1,6 +1,24 @@
 @extends('base.base')
+@section('title')
+    @parent
+    @if($category && $category != 'new')
+        - {{ $category_list[$category] }}
+    @else
+        - 首页
+    @endif
+@endsection
 
-@section('title','首页')
+@section('breadcrumb')
+    <ol class="breadcrumb breadcrumb-ling">
+
+        @if($category && $category != 'new')
+            <li><a href="/">首页</a></li>
+            <li class="active">{{ $category_list[$category] }}</li>
+        @else
+            <li class="active">首页</li>
+        @endif
+    </ol>
+@endsection
 
 @section('content')
     <div class="ling-list-box">
@@ -24,7 +42,7 @@
                             {{--<a style="float:left; margin-right:30px">{{ $l->name }}</a>--}}
                             <p style="float:left; margin-right:10px; color: black;">{{ $l->name }}</p>
                             <p style="float: left; margin-right:10px;">{{ format_time($l->create_date) }}</p>
-                            {{--<p style="float: left;"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> 1213</p>--}}
+                            <p style="float: left;"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> {{ $l->click_amount }} </p>
                         </div>
                     </div>
                 </li>

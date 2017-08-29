@@ -39,10 +39,11 @@ function format_time($dt=0)
     }
 //    return $dt->format($format['diff_year_date']);
     //今天
-    if( $dt->isToday() ) {
+    $diff_second = abs ($dt->diffInSeconds() );
+    $diff_minute = floor($diff_second / 60);
+    $diff_hour = floor($diff_minute / 60);
 
-        $diff_second = abs ($dt->diffInSeconds() );
-        $diff_minute = floor($diff_second / 60);
+    if( $diff_hour < 24 ) {
 
         //1小时内
         if($diff_minute < 60) {
@@ -52,21 +53,20 @@ function format_time($dt=0)
 
             return $diff_minute.$format['before_minute'] ;
         }else {
-            $diff_hour = floor($diff_minute / 60);
+
 
             return $diff_hour . $format['before_hours'];
         }
     }
-
+    $diff_day = ceil($diff_hour / 24);
     if ($dt->isCurrentMonth()) {
-        return $dt->diffInDays() . $format['before_day'];
+        return $diff_day . $format['before_day'];
     }
     if ($dt->isCurrentYear()) {
         return $dt->format($format['month_day']);
     }
 
     return $dt->format($format['year']);
-
 
 }
 

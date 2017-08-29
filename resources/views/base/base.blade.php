@@ -5,14 +5,21 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 站长 -->
+    <meta name="baidu-site-verification" content="xXN4NvYoFW" />
+
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <meta name="description" content="57 point">
-    <meta name="author" content="ling">
+    <meta name="keywords" content="57point, 57点, 57早知道, 57资源">
+    <meta name="description" content="57早知道, 致力于分享各种类型的好文章给大家">
 
-    <title>@yield('title')</title>
+    <title>
+        @section('title')
+            57早知道
+        @show
+    </title>
 
     <!-- Bootstrap core CSS -->
     <link href="{{ asset('bootstrap/dist/css/bootstrap.min.css') }}" rel="stylesheet">
@@ -51,7 +58,8 @@
 <div class="container ling-container ling-container-main">
 
     <div class="row" style="margin: 0;">
-
+        @section('breadcrumb')
+        @show
         <div class="col-sm-8 ling-main">
             @section('content')
             @show
@@ -81,6 +89,17 @@
         throttle: 2
     });
 </script>
+<!-- 百度统计 -->
+<script>
+    var _hmt = _hmt || [];
+    (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?94e8b3a588e30f9d6ae660cdc60731c3";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
 @section('js')
 @show
 </body>

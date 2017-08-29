@@ -9,7 +9,9 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="/">资讯 &bull; V-宝典</a>
+                    <a class="navbar-brand" href="/" style="padding: 1px; width: 184px">
+                        <img src="{{ asset('log.png') }}" style="height: 50px;">
+                    </a>
                 </div>
                 <div id="navbar" class="navbar-collapse collapse">
                     <ul class="nav navbar-nav">
@@ -22,7 +24,6 @@
                                     @endif
                                     ><a href="/category/{{ $c->word }}">{{ $c->name }}</a></li>
                         @endforeach
-
                         @if (count($category_menu) >= 3 )
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">更多 <span class="caret"></span></a>

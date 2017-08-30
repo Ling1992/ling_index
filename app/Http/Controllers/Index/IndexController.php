@@ -167,7 +167,7 @@ class IndexController extends Controller
             ->with('recommendation', $this->recommendation)
             ;
     }
-    function getList() {
+    function getList($like='') {
 
         $category_index_list= Cache::get('category_index_list');
         if (!$category_index_list) {
@@ -179,6 +179,7 @@ class IndexController extends Controller
         $article_list = DB::table('toutiao_article_list as a')
             ->leftJoin('toutiao_article_category as b', 'a.category_id','=','b.category_id')
             ->whereIn('a.category_id',$category_index_list?:[])
+            ->where('a.title', 'like', '%'. $like .'%')
             ->select('a.id', 'a.title', 'a.image_url')
             ->orderBy('a.create_date','desc')
             ->limit(10)
@@ -186,9 +187,10 @@ class IndexController extends Controller
         $data = [];
         foreach ($article_list as $k=>$item) {
             $data[$k]['article_url'] = "http://www.vbaodian.cn/article/" . $item->id;
-            $data[$k]['image_url'] = env('img_src_pre','') . urlFilter($item->image_url);
+            $data[$k]['image_url'] = urlFilter($item->image_url);
             $data[$k]['title'] = filterTitle($item->id, $item->title);
         }
+//        echo $like;
         return response($data, 200);
     }
 

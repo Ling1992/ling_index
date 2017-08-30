@@ -26,7 +26,7 @@ Route::group(['middleware' => 'ling_index','namespace' => 'Index'], function(){
 
     Route::get('article/{id}',['uses'=>'IndexController@article','as'=>'article'])->where('id', '[0-9]+');
 
-    Route::get('getList','IndexController@getList');
+    Route::get('getList/{like?}','IndexController@getList');
 });
 
 //Route::get('/test', 'Index\IndexController@test');

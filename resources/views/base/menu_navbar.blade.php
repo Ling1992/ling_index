@@ -14,7 +14,7 @@
                     </a>
                 </div>
                 <div id="navbar" class="navbar-collapse collapse">
-                    <ul class="nav navbar-nav">
+                    <ul class="nav navbar-nav ling-nav">
                         @foreach ($category_menu as $c)
                             @if ($loop->iteration > 3)
                                 @break
@@ -27,7 +27,7 @@
                         @if (count($category_menu) >= 3 )
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">更多 <span class="caret"></span></a>
-                                <ul class="dropdown-menu" style="background-color: #4a4a4a">
+                                <ul class="dropdown-menu ling-dropdown-menu" style="background-color: #4a4a4a">
                                     @foreach ($category_menu as $c)
                                         @if ($loop->iteration > 3)
                                             @if (($loop->iteration % 3) == 0)

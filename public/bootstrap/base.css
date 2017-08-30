@@ -34,6 +34,12 @@ body {
     background-color: lightslategrey;
     border-radius: 4px;
 }
+.navbar-default .navbar-nav .open .ling-dropdown-menu>li>a {
+    color: #fff;
+}
+.navbar-default .ling-nav>li>a {
+    color: #fff;
+}
 
 .ling-navbar {
     border: 0 solid #e7e7e7;
@@ -174,7 +180,12 @@ body {
     .navbar-wrapper .navbar {
         border-radius: 4px;
     }
-
+    .navbar-default .navbar-nav .open .ling-dropdown-menu>li>a {
+        color: #777;
+    }
+    .navbar-default .ling-nav>li>a {
+        color: #777;
+    }
     .ling-navbar {
         border: 1px solid #e7e7e7;
         background-color: palegreen;

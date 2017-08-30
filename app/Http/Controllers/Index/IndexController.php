@@ -167,6 +167,31 @@ class IndexController extends Controller
             ->with('recommendation', $this->recommendation)
             ;
     }
+    function getList() {
+
+        $category_index_list= Cache::get('category_index_list');
+        if (!$category_index_list) {
+            $category_index_list = DB::table('relation_category')->where('index_id','=', 1)->pluck('category_id');
+            Cache::put('category_index_list',$category_index_list,60*12);
+        }
+
+
+        $article_list = DB::table('toutiao_article_list as a')
+            ->leftJoin('toutiao_article_category as b', 'a.category_id','=','b.category_id')
+            ->whereIn('a.category_id',$category_index_list?:[])
+            ->select('a.id', 'a.title', 'a.image_url')
+            ->orderBy('a.create_date','desc')
+            ->limit(10)
+            ->get();
+        $data = [];
+        foreach ($article_list as $k=>$item) {
+            $data[$k]['article_url'] = "http://www.vbaodian.cn/article/" . $item->id;
+            $data[$k]['image_url'] = urlFilter($item->image_url);
+            $data[$k]['title'] = filterTitle($item->id, $item->title);
+        }
+        return response($data, 200);
+    }
+
 
     function test(){
         $data = DB::table('toutiao_article_list as a')

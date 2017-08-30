@@ -25,9 +25,11 @@ Route::group(['middleware' => 'ling_index','namespace' => 'Index'], function(){
     Route::get('category/{category}','IndexController@category')->where('category','[a-z_]{3,}');
 
     Route::get('article/{id}',['uses'=>'IndexController@article','as'=>'article'])->where('id', '[0-9]+');
+
+    Route::get('getList','IndexController@getList');
 });
 
-//Route::get('/test', 'Index\IndexController@test');
+Route::get('/test', 'Index\IndexController@test');
 
 Route::get('/image/{width}/{height}', 'Index\ImageController@index')->where(['width' => '[0-9]+', 'height' => '[0-9]+']);
 

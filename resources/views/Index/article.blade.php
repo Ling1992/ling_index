@@ -15,7 +15,8 @@
             <li><a href="/category/{{ $category }}">{{ $category_list[$category] }}</a></li>
             <li class="active">正文</li>
         @else
-            <li class="active">XX</li>
+            <li><a href="/">首页</a></li>
+            <li class="active">正文</li>
         @endif
     </ol>
 @endsection

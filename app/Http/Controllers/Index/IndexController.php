@@ -140,6 +140,7 @@ class IndexController extends Controller
             $aa = DB::table('relation_category as a')
                 ->leftJoin('index_article_category as b', 'b.category_index_id', '=', 'a.index_id')
                 ->where('a.category_id', $data->category_id)
+                ->where('b.state',1)
                 ->groupBy('a.index_id')
                 ->pluck('word');
             if (count($aa) >=2) {

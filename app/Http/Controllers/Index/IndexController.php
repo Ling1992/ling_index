@@ -30,7 +30,7 @@ class IndexController extends Controller
         $this->category = Cache::get('category');
         $this->category_list = Cache::get('category_list');
         if (!$this->category) {
-            $this->category = DB::table('index_article_category')->orderBy('sort')->get();
+            $this->category = DB::table('index_article_category')->where('state',1)->orderBy('sort')->get();
             foreach ($this->category as $value) {
                 $this->category_list[$value->word] = $value->name;
             }

@@ -186,7 +186,7 @@ class IndexController extends Controller
         $data = [];
         foreach ($article_list as $k=>$item) {
             $data[$k]['article_url'] = "http://www.vbaodian.cn/article/" . $item->id;
-            $data[$k]['image_url'] = urlFilter($item->image_url);
+            $data[$k]['image_url'] = env('img_src_pre','') . urlFilter($item->image_url);
             $data[$k]['title'] = filterTitle($item->id, $item->title);
         }
         return response($data, 200);

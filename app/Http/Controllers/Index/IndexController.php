@@ -174,12 +174,18 @@ class IndexController extends Controller
             $category_index_list = DB::table('relation_category')->where('index_id','=', 1)->pluck('category_id');
             Cache::put('category_index_list',$category_index_list,60*12);
         }
-
+        $like_arr = explode('-', $like);
 
         $article_list = DB::table('toutiao_article_list as a')
             ->leftJoin('toutiao_article_category as b', 'a.category_id','=','b.category_id')
             ->whereIn('a.category_id',$category_index_list?:[])
-            ->where('a.title', 'like', '%'. $like .'%')
+            ->where(function ($query) use ($like_arr) {
+                if ($like_arr){
+                    foreach ($like_arr as $item) {
+                        $query->orWhere('a.title', 'like', '%'. $item .'%');
+                    }
+                }
+            })
             ->select('a.id', 'a.title', 'a.image_url')
             ->orderBy('a.create_date','desc')
             ->limit(10)

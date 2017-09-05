@@ -188,7 +188,7 @@ class IndexController extends Controller
             })
             ->select('a.id', 'a.title', 'a.image_url')
             ->orderBy('a.create_date','desc')
-            ->limit(10)
+            ->limit(20)
             ->get();
         $data = [];
         foreach ($article_list as $k=>$item) {

@@ -124,7 +124,7 @@ function filterArticle($id, $content) {
     if ($content) {
         $article = \Illuminate\Support\Facades\Cache::get('article_'.$id);
         if (!$article) {
-            $article = filterContent($content);
+            $article = filterContent(htmlspecialchars_decode($content));
             \Illuminate\Support\Facades\Cache::put('article_'.$id,$article,60*24*2);
         }
     }

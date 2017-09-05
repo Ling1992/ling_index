@@ -88,6 +88,12 @@ function filterKey($str){
     }
     return $str;
 }
+
+
+/**
+ * @param $content      -- 过滤 关键字 和 url
+ * @return string
+ */
 function filterContent($content) {
     $content = preg_replace('/src="([^"]+)/i', 'src="'.asset('img/onload.gif').'" data-echo="'.env('img_src_pre','').'\1', $content);
     $content = filterKey($content);
@@ -124,7 +130,10 @@ function filterArticle($id, $content) {
     if ($content) {
         $article = \Illuminate\Support\Facades\Cache::get('article_'.$id);
         if (!$article) {
-            $article = filterContent(htmlspecialchars_decode($content));
+            $content = articleFilter($content);
+            $content = htmlspecialchars_decode($content);
+            $content = articleFilterAfter($content);
+            $article = filterContent($content);
             \Illuminate\Support\Facades\Cache::put('article_'.$id,$article,60*24*2);
         }
     }
@@ -136,4 +145,22 @@ function urlFilter($url, $type=0){
         return "http:".$url;
     }
     return $url;
+}
+
+function articleFilter($content){
+    // 过滤  <!--相关新闻 begin--> <!--相关新闻 end-->  2017-09-05
+    // 过滤  <!--相关专题 begin--> <!--相关专题 end-->  2017-09-05
+    // 过滤  <!-- 责任编辑&版权 begin--> <!-- 责任编辑&版权 begin-->  2017-09-05
+    // author_id = 5954781019 环球网
+    $content = preg_replace('/<!--相关新闻 begin-->[\s\S]*<!--相关新闻 end-->/', '', $content);
+    $content = preg_replace('/<!--相关专题 begin-->[\s\S]*<!--相关专题 end-->/', '', $content);
+    $content = preg_replace('/<!-- 责任编辑&版权 begin-->[\s\S]*<!-- 责任编辑&版权 begin-->/', '', $content);
+
+    return $content;
+}
+
+function articleFilterAfter($content) {
+    // 过滤 <p> XX 原创栏目 XX </p>
+    $content = preg_replace('/<p>(?:(?!<p>)[\S\s])*原创栏目(?:(?!<\/p>)[\S\s])*<\/p>/', '', $content);
+    return $content;
 }

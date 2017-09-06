@@ -168,28 +168,49 @@ class IndexController extends Controller
             ;
     }
     function getList($like='') {
-
-        $category_index_list= Cache::get('category_index_list');
-        if (!$category_index_list) {
-            $category_index_list = DB::table('relation_category')->where('index_id','=', 1)->pluck('category_id');
-            Cache::put('category_index_list',$category_index_list,60*12);
-        }
         $like_arr = explode('-', $like);
+        $article_list = [];
+        foreach ($like_arr as $k=>$value) {
+            if ($k >=3) break;
+            $articles = DB::table('toutiao_article_list')
+                ->where('title', 'like', "%$value%")
+                ->orWhere('abstract', 'like', "%$value%")
+                ->select('id', 'title', 'image_url')
+                ->orderBy('create_date','desc')
+                ->limit(20)
+                ->get();
+            $article_list = array_merge($article_list, $articles->all());
+        }
 
-        $article_list = DB::table('toutiao_article_list as a')
-            ->leftJoin('toutiao_article_category as b', 'a.category_id','=','b.category_id')
-            ->whereIn('a.category_id',$category_index_list?:[])
-            ->where(function ($query) use ($like_arr) {
-                if ($like_arr){
-                    foreach ($like_arr as $item) {
-                        $query->orWhere('a.title', 'like', '%'. $item .'%');
-                    }
-                }
-            })
-            ->select('a.id', 'a.title', 'a.image_url')
-            ->orderBy('a.create_date','desc')
+        $article_list_base = [];
+        $articles = DB::table('toutiao_article_list')
+            ->where('is_hot', 1)
+            ->select('id', 'title', 'image_url')
+            ->orderBy('create_date','desc')
             ->limit(20)
             ->get();
+        $article_list_base = array_merge($article_list_base, $articles->all());
+
+        $articles = DB::table('toutiao_article_list')
+            ->select('id', 'title', 'image_url')
+            ->orderBy('create_date','desc')
+            ->limit(20)
+            ->get();
+        $article_list_base = array_merge($article_list_base, $articles->all());
+        if ($article_list && count($article_list) <=20 ) {
+            $article_list_base = $this->array_obj_unique($article_list_base);
+            shuffle($article_list_base);
+            $article_list_base = array_slice($article_list_base, 0 , 10);
+        }else if ($article_list && count($article_list) <= 40) {
+            $article_list_base = $this->array_obj_unique($article_list_base);
+            shuffle($article_list_base);
+            $article_list_base = array_slice($article_list_base, 0 , 20);
+        }
+        $article_list = array_merge($article_list, $article_list_base);
+
+        $article_list = $this->array_obj_unique($article_list);
+        shuffle($article_list);
+        $article_list = array_slice($article_list,0,20);
         $data = [];
         foreach ($article_list as $k=>$item) {
             $data[$k]['article_url'] = "http://www.vbaodian.cn/article/" . $item->id;
@@ -200,39 +221,75 @@ class IndexController extends Controller
         return response($data, 200);
     }
 
+    private function array_obj_unique($data){
+        $temp = [];
+        foreach ($data as $v){
+            $temp[]=json_encode($v);
+        }
+        $temp=array_unique($temp);
+        $temp2 = [];
+        foreach ($temp as $v){
+            $temp2[] = json_decode($v);
+        }
+        return $temp2;
+    }
 
     function test(){
-        $data = DB::table('toutiao_article_list as a')
-            ->leftJoin('toutiao_author as b', 'b.author_id', '=', 'a.author_id')
-            ->where('a.id', 77307)
-            ->first();
-
-        abort_if(!$data,404,'not found article info');
-        $article = DB::table("toutiao_article_0{$data->article_table_tag}")->where('id',$data->article_id)->first();
-        abort_if(!$article,404, 'not found article ');
-        $data->article=filterArticle(77307,$article->article);
-
-
-//        $users = DB::select(" select * from relation_category group by category_id");
-        $aa = DB::table('relation_category as a')
-            ->leftJoin('index_article_category as b', 'b.category_index_id', '=', 'a.index_id')
-            ->where('a.category_id', $data->category_id)
-            ->groupBy('a.index_id')
-            ->pluck('word');
-        if (count($aa) >=2) {
-            foreach ($aa as $item){
-                if ($item == 'new') {
-                    continue;
-                }
-                $category = $item;
+        $like = "";
+        $like_arr = explode('-', $like);
+        $article_list = [];
+        if ($article_list) {
+            foreach ($like_arr as $k=>$value) {
+                echo $k;
+                if ($k >=3) break;
+                $articles = DB::table('toutiao_article_list')
+                    ->where('title', 'like', "%$value%")
+                    ->orWhere('abstract', 'like', "%$value%")
+                    ->select('id', 'title', 'image_url')
+                    ->orderBy('create_date','desc')
+                    ->limit(20)
+                    ->get();
+                $article_list = array_merge($article_list, $articles->all());
             }
-        }else {
-            $category = $aa[0];
         }
-        echo $category;
 
+        $article_list_base = [];
+        $articles = DB::table('toutiao_article_list')
+            ->where('is_hot', 1)
+            ->select('id', 'title', 'image_url')
+            ->orderBy('create_date','desc')
+            ->limit(20)
+            ->get();
+        $article_list_base = array_merge($article_list_base, $articles->all());
 
-        dd([$data,$aa]);
+        $articles = DB::table('toutiao_article_list')
+            ->select('id', 'title', 'image_url')
+            ->orderBy('create_date','desc')
+            ->limit(20)
+            ->get();
+        $article_list_base = array_merge($article_list_base, $articles->all());
+        if ($article_list && count($article_list) <=20 ) {
+            $article_list_base = $this->array_obj_unique($article_list_base);
+            shuffle($article_list_base);
+            $article_list_base = array_slice($article_list_base, 0 , 10);
+        }else if ($article_list && count($article_list) <= 40) {
+            $article_list_base = $this->array_obj_unique($article_list_base);
+            shuffle($article_list_base);
+            $article_list_base = array_slice($article_list_base, 0 , 20);
+        }
+        $article_list = array_merge($article_list, $article_list_base);
+
+        $article_list = $this->array_obj_unique($article_list);
+        shuffle($article_list);
+        $article_list = array_slice($article_list,0,20);
+        $data = [];
+        foreach ($article_list as $k=>$item) {
+            $data[$k]['article_url'] = "http://www.vbaodian.cn/article/" . $item->id;
+            $data[$k]['image_url'] = urlFilter($item->image_url);
+            $data[$k]['title'] = filterTitle($item->id, $item->title);
+        }
+        return response($data, 200);
+//        dd(array_slice($article_list,0,20));
     }
 
 }

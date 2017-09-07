@@ -150,8 +150,10 @@ class IndexController extends Controller
                     }
                     $category = $item;
                 }
-            }else {
+            }elseif (count($aa) > 0) {
                 $category = $aa[0];
+            }else {
+                $category = 'new';
             }
             Cache::put('article_c_'.$data->category_id, 60*24*2);
         }

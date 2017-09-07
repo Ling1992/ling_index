@@ -172,20 +172,24 @@ class IndexController extends Controller
     function getList($like='') {
         $like_arr = explode('-', $like);
         $article_list = [];
-        foreach ($like_arr as $k=>$value) {
-            if ($k >=3) break;
-            $articles = DB::table('toutiao_article_list')
-                ->where('title', 'like', "%$value%")
-                ->orWhere('abstract', 'like', "%$value%")
-                ->select('id', 'title', 'image_url')
-                ->orderBy('create_date','desc')
-                ->limit(20)
-                ->get();
-            $article_list = array_merge($article_list, $articles->all());
+        if ($like) {
+            foreach ($like_arr as $k=>$value) {
+                if ($k >=3) break;
+                $articles = DB::table('toutiao_article_list')
+                    ->where('category_id', 6)
+                    ->where('title', 'like', "%$value%")
+                    ->orWhere('abstract', 'like', "%$value%")
+                    ->select('id', 'title', 'image_url')
+                    ->orderBy('create_date','desc')
+                    ->limit(20)
+                    ->get();
+                $article_list = array_merge($article_list, $articles->all());
+            }
         }
 
         $article_list_base = [];
         $articles = DB::table('toutiao_article_list')
+            ->where('category_id', 6)
             ->where('is_hot', 1)
             ->select('id', 'title', 'image_url')
             ->orderBy('create_date','desc')
@@ -194,6 +198,7 @@ class IndexController extends Controller
         $article_list_base = array_merge($article_list_base, $articles->all());
 
         $articles = DB::table('toutiao_article_list')
+            ->where('category_id', 6)
             ->select('id', 'title', 'image_url')
             ->orderBy('create_date','desc')
             ->limit(20)
@@ -237,61 +242,9 @@ class IndexController extends Controller
     }
 
     function test(){
-        $like = "";
+        $like = 'aa';
         $like_arr = explode('-', $like);
-        $article_list = [];
-        if ($article_list) {
-            foreach ($like_arr as $k=>$value) {
-                echo $k;
-                if ($k >=3) break;
-                $articles = DB::table('toutiao_article_list')
-                    ->where('title', 'like', "%$value%")
-                    ->orWhere('abstract', 'like', "%$value%")
-                    ->select('id', 'title', 'image_url')
-                    ->orderBy('create_date','desc')
-                    ->limit(20)
-                    ->get();
-                $article_list = array_merge($article_list, $articles->all());
-            }
-        }
-
-        $article_list_base = [];
-        $articles = DB::table('toutiao_article_list')
-            ->where('is_hot', 1)
-            ->select('id', 'title', 'image_url')
-            ->orderBy('create_date','desc')
-            ->limit(20)
-            ->get();
-        $article_list_base = array_merge($article_list_base, $articles->all());
-
-        $articles = DB::table('toutiao_article_list')
-            ->select('id', 'title', 'image_url')
-            ->orderBy('create_date','desc')
-            ->limit(20)
-            ->get();
-        $article_list_base = array_merge($article_list_base, $articles->all());
-        if ($article_list && count($article_list) <=20 ) {
-            $article_list_base = $this->array_obj_unique($article_list_base);
-            shuffle($article_list_base);
-            $article_list_base = array_slice($article_list_base, 0 , 10);
-        }else if ($article_list && count($article_list) <= 40) {
-            $article_list_base = $this->array_obj_unique($article_list_base);
-            shuffle($article_list_base);
-            $article_list_base = array_slice($article_list_base, 0 , 20);
-        }
-        $article_list = array_merge($article_list, $article_list_base);
-
-        $article_list = $this->array_obj_unique($article_list);
-        shuffle($article_list);
-        $article_list = array_slice($article_list,0,20);
-        $data = [];
-        foreach ($article_list as $k=>$item) {
-            $data[$k]['article_url'] = "http://www.vbaodian.cn/article/" . $item->id;
-            $data[$k]['image_url'] = urlFilter($item->image_url);
-            $data[$k]['title'] = filterTitle($item->id, $item->title);
-        }
-        return response($data, 200);
-//        dd(array_slice($article_list,0,20));
+        dd($like_arr);
     }
 
 }

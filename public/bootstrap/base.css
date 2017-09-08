@@ -159,6 +159,9 @@ body {
     margin-bottom: 10px;
     margin-top: -9px;
 }
+.ling-slick .image{
+    height: 180px;
+}
 /* RESPONSIVE CSS
 -------------------------------------------------- */
 
@@ -294,6 +297,9 @@ body {
         background-color: #fcfcfc;
         margin-bottom: 4px;
         margin-top: 0px;
+    }
+    .ling-slick .image{
+        height: 300px;
     }
 }
 

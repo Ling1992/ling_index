@@ -40,14 +40,13 @@
             <div style="background-color: #b0b0b0; padding: 5px; margin-bottom: 10px">
                 <h3>57-电影</h3>
             </div>
-            <div class="slick">
+            <div class="slick ling-slick">
                 @foreach ($movie_list as $value)
                     <div class="col-sm-4" style="padding: 0">
-                        <div class="image">
-                            <a href="{{ $value->id }}">
-                                <img src="/image/244/351?url={{ urlencode(movie_img_filter($value->img)) }}" style="width: 100%; height: 100%"/>
-                            </a>
-                        </div>
+                        <a href="{{ $value->id }}">
+                            <div class="image" style="background-image: url({{ movie_img_filter($value->img) }});background-size:100% 99.9%;">
+                            </div>
+                        </a>
                         <div style="position: absolute;bottom: 0; background-color: rgba(0,0,0,0.53);">
                             <p style="font-size: 12px; margin: 0;color: rgba(255,255,255,0.76);display: block;overflow: hidden;">
                                 {{ $value->title }}

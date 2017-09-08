@@ -14,12 +14,14 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use GuzzleHttp\Client;
 
 class IndexController extends Controller
 {
     private $category;
     private $recommendation;
     private $category_list;
+    private $movie_list;
 
     /**
      * IndexController constructor.
@@ -56,6 +58,26 @@ class IndexController extends Controller
             Cache::put('recommendation',$this->recommendation, 60*12);
             Log::info('3');
         }
+        // 57-电影
+        $this->movie_list = Cache::get('movie_list');
+        if (!$this->movie_list) {
+            $http_client = new Client([
+                // Base URI is used with relative requests
+                'base_uri' => 'http://vtalking.cn/index.php/api/api_stream',
+                // You can set any number of default request options.
+                'timeout'  => 5.0,
+            ]);
+            $response = $http_client->request('GET');
+            if ($response->getStatusCode() == 200) {
+                $this->movie_list = \GuzzleHttp\json_decode($response->getBody());
+                if (count($this->movie_list) <= 1) {
+                    $this->movie_list = [0];
+                }
+            }else{
+                $this->movie_list = [0];
+            }
+            Cache::put('movie_list',$this->movie_list, 60*2);  // 2小时
+        }
 
     }
 
@@ -85,6 +107,7 @@ class IndexController extends Controller
             ->with('category','new')  // 类型 key
             ->with('category_list',$this->category_list)  // 类型 key->name list
             ->with('recommendation', $this->recommendation) // 推荐
+            ->with('movie_list', $this->movie_list) // 57-电影
             ;
     }
 
@@ -115,6 +138,7 @@ class IndexController extends Controller
             ->with('category',$category)
             ->with('category_list',$this->category_list)
             ->with('recommendation', $this->recommendation)
+            ->with('movie_list', $this->movie_list) // 57-电影
             ;
     }
 
@@ -167,6 +191,7 @@ class IndexController extends Controller
             ->with('category',$category)
             ->with('category_list',$this->category_list)
             ->with('recommendation', $this->recommendation)
+            ->with('movie_list', $this->movie_list) // 57-电影
             ;
     }
     function getList($like='') {
@@ -241,10 +266,11 @@ class IndexController extends Controller
         return $temp2;
     }
 
-    function test(){
-        $like = 'aa';
-        $like_arr = explode('-', $like);
-        dd($like_arr);
+    function test()
+    {
+        // 57-电影
+        $this->movie_list = Cache::get('movie_list');
+        dd($this->movie_list);
     }
 
 }

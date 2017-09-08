@@ -164,3 +164,14 @@ function articleFilterAfter($content) {
     $content = preg_replace('/<p>(?:(?!<p>)[\S\s])*原创栏目(?:(?!<\/p>)[\S\s])*<\/p>/', '', $content);
     return $content;
 }
+
+
+function movie_img_filter($url) {
+    if (strpos($url, 'read.html5.qq.com')) {
+        return $url;
+    }
+    if (substr($url, 0, 8) == '/images/') {
+        return 'http://www.vtalking.cn/' . $url;
+    }
+    return str_replace("\/", "/", $url);
+}

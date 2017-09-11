@@ -127,16 +127,16 @@ function filterAbstract($id, $content) {
 
 function filterArticle($id, $content) {
     $article = $content;
-    if ($content) {
-        $article = \Illuminate\Support\Facades\Cache::get('article_'.$id);
-        if (!$article) {
+//    if ($content) {
+//        $article = \Illuminate\Support\Facades\Cache::get('article_'.$id);
+//        if (!$article) {
             $content = articleFilter($content);
             $content = htmlspecialchars_decode($content);
             $content = articleFilterAfter($content);
             $article = filterContent($content);
             \Illuminate\Support\Facades\Cache::put('article_'.$id,$article,60*24*2);
-        }
-    }
+//        }
+//    }
     return $article;
 }
 
@@ -172,6 +172,9 @@ function articleFilterAfter($content) {
     $content = preg_replace('/欢迎在评论区回复小编/', '', $content);
     // 过滤 欢迎大家咨询交流
     $content = preg_replace('/欢迎大家咨询交流/', '', $content);
+
+    // 过滤 img 果大蜀黍 关注
+    $content = preg_replace('/<img(?:(?!>)[\S\s])*http:\/\/p1\.pstatp\.com\/large\/32220001df597f8ed53e(?:(?!>)[\S\s])*>/', '', $content);
     return $content;
 }
 

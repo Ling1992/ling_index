@@ -162,6 +162,16 @@ function articleFilter($content){
 function articleFilterAfter($content) {
     // 过滤 <p> XX 原创栏目 XX </p>
     $content = preg_replace('/<p>(?:(?!<p>)[\S\s])*原创栏目(?:(?!<\/p>)[\S\s])*<\/p>/', '', $content);
+    // 过滤 <p> XX 订阅小编 XX </p>
+    $content = preg_replace('/<p>(?:(?!<p>)[\S\s])*订阅小编(?:(?!<\/p>)[\S\s])*<\/p>/', '', $content);
+    // 过滤 <p> XX 欢迎点赞欢迎评论 XX </p>
+    $content = preg_replace('/<p>(?:(?!<p>)[\S\s])*欢迎点赞欢迎评论(?:(?!<\/p>)[\S\s])*<\/p>/', '', $content);
+    // 过滤 <p> XX 欢迎关注 XX 的专栏 XX </p>
+    $content = preg_replace('/<p>(?:(?!<p>)[\S\s])*欢迎关注(?:(?!<p>)[\S\s])*(?:(?!<\/p>)[\S\s])*的专栏(?:(?!<\/p>)[\S\s])*<\/p>/', '', $content);
+    // 过滤 欢迎在评论区回复小编
+    $content = preg_replace('/欢迎在评论区回复小编/', '', $content);
+    // 过滤 欢迎大家咨询交流
+    $content = preg_replace('/欢迎大家咨询交流/', '', $content);
     return $content;
 }
 

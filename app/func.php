@@ -127,16 +127,16 @@ function filterAbstract($id, $content) {
 
 function filterArticle($id, $content) {
     $article = $content;
-//    if ($content) {
-//        $article = \Illuminate\Support\Facades\Cache::get('article_'.$id);
-//        if (!$article) {
+    if ($content) {
+        $article = \Illuminate\Support\Facades\Cache::get('article_'.$id);
+        if (!$article) {
             $content = articleFilter($content);
             $content = htmlspecialchars_decode($content);
             $content = articleFilterAfter($content);
             $article = filterContent($content);
             \Illuminate\Support\Facades\Cache::put('article_'.$id,$article,60*24*2);
-//        }
-//    }
+        }
+    }
     return $article;
 }
 

@@ -9,15 +9,11 @@
 
 @section('breadcrumb')
     <ol class="breadcrumb breadcrumb-ling">
-
+        <li><a href="/">首页</a></li>
         @if($category && $category != 'new')
-            <li><a href="/">首页</a></li>
             <li><a href="/category/{{ $category }}">{{ $category_list[$category] }}</a></li>
-            <li class="active">正文</li>
-        @else
-            <li><a href="/">首页</a></li>
-            <li class="active">正文</li>
         @endif
+        <li class="active">正文</li>
     </ol>
 @endsection
 
@@ -26,11 +22,13 @@
 
     <div class="blog-post" style="position: relative">
         <h2 class="blog-post-title">{{ filterTitle($data->id,$data->title) }}</h2>
-        <p class="blog-post-meta"> {{ $data->create_date }} </p>
+        <p class="blog-post-meta"> {{ $data->create_time }} </p>
         <div style="position: relative">
             <div style="display: block;">
                 {!! $data->article !!}
             </div>
+            <p class="blog-post-meta">57早知道 ---------------------------------- </p>
+            <p class="blog-post-meta">{{ $data->create_date }}</p>
         </div>
     </div><!-- /.blog-post -->
 

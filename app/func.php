@@ -156,10 +156,16 @@ function articleFilter($content){
     $content = preg_replace('/<!--相关专题 begin-->[\s\S]*<!--相关专题 end-->/', '', $content);
     $content = preg_replace('/<!-- 责任编辑&版权 begin-->[\s\S]*<!-- 责任编辑&版权 begin-->/', '', $content);
 
+    // 过滤 <script></script>
+    $content = preg_replace('/<script(?:(?!<script)[\S\s])*<\/script>/', '', $content);
+    // 过滤 <div style="display:none" id="yuanweninfo">url:http://m.gmw.cn/toutiao/2017-09/12/content_26132659.htm,id:26132659</div>
+    $content = preg_replace('/<div(?:(?!<div)[\S\s])*display:none(?:(?!<\/div>)[\S\s])*<\/div>/', '', $content);
+
     return $content;
 }
 
 function articleFilterAfter($content) {
+    \Illuminate\Support\Facades\Log::info($content);
     // 过滤 <p> XX 原创栏目 XX </p>
     $content = preg_replace('/<p>(?:(?!<p>)[\S\s])*原创栏目(?:(?!<\/p>)[\S\s])*<\/p>/', '', $content);
     // 过滤 <p> XX 订阅小编 XX </p>
@@ -175,6 +181,7 @@ function articleFilterAfter($content) {
 
     // 过滤 img 果大蜀黍 关注
     $content = preg_replace('/<img(?:(?!>)[\S\s])*http:\/\/p1\.pstatp\.com\/large\/32220001df597f8ed53e(?:(?!>)[\S\s])*>/', '', $content);
+
     return $content;
 }
 

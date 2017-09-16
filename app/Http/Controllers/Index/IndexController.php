@@ -15,6 +15,10 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use GuzzleHttp\Client;
+use XS;
+use XSDocument;
+use XSException;
+use XSTokenizerScws;
 
 class IndexController extends Controller
 {
@@ -268,9 +272,57 @@ class IndexController extends Controller
 
     function test()
     {
-        // 57-电影
-        $this->movie_list = Cache::get('movie_list');
-        dd($this->movie_list);
+        $xs = new XS("demo");
+
+        $data = [
+            'article_id'=>1,
+            'category'=>'娱乐',
+            'title'=>'标题啊啊啊啊啊啊标题',
+            'article'=>'内容， --阿斯蒂芬拉时代峻峰阿斯顿飞机啦； 啊；的按键锁定量啊大家 l',
+            'create_date'=>12312312,
+            'author'=>'ling',
+            'author_id'=>11
+        ];
+
+        $doc = new XSDocument;  // 使用默认字符集
+
+        for ($i=0; $i<= 200; $i ++) {
+
+            $data = [
+                'article_id'=>$i,
+                'category'=>'娱乐',
+                'title'=>'标题啊啊啊啊啊啊标题',
+                'article'=>'内容， --阿斯蒂芬拉时代峻峰阿斯顿飞机啦； 啊；的按键锁定量啊大家 l',
+                'create_date'=>12312312,
+                'author'=>'ling',
+                'author_id'=>11
+            ];
+            $doc->setFields($data);
+            $xs->index->add($doc);
+        }
+        $xs->index->flushIndex();
+    }
+
+    function test1(){
+        $xs = new XS("demo");
+        $xs->search->setLimit(500, 100);
+        $docs = $xs->search->search(); // 执行搜索，将搜索结果文档保存在 $docs 数组中
+        $count = $xs->search->count(); // 获取搜索结果的匹配总数估算值
+        print_r($count);
+        dd($docs);
+    }
+
+    function test2(){
+        $xs = new XS("demo");
+        $tokenizer = new XSTokenizerScws;   // 直接创建实例
+
+        $text = '迅搜(xunsearch)是优秀的开源全文检索解决方案';
+        $tokenizer->setIgnore();
+        $tokenizer->setDuality();
+        $tokenizer->setMulti(3);
+
+        $words = $tokenizer->getTops($text,3,'n,v,vn');
+        dd($words);
     }
 
 }

@@ -294,18 +294,19 @@ class IndexController extends Controller
                 'title'=>'标题啊啊啊啊啊啊标题',
                 'article'=>'内容， --阿斯蒂芬拉时代峻峰阿斯顿飞机啦； 啊；的按键锁定量啊大家 l',
                 'create_date'=>12312312,
-                'author'=>'ling',
-                'author_id'=>11
+                'author'=>'ling1111',
+                'author_id'=>11,
+                'ling'=>'ling'
             ];
             $doc->setFields($data);
-            $xs->index->add($doc);
+            $xs->index->update($doc);
         }
         $xs->index->flushIndex();
     }
 
     function test1(){
         $xs = new XS("demo");
-        $xs->search->setLimit(500, 100);
+//        $xs->search->setLimit(500, 0);
         $docs = $xs->search->search(); // 执行搜索，将搜索结果文档保存在 $docs 数组中
         $count = $xs->search->count(); // 获取搜索结果的匹配总数估算值
         print_r($count);
@@ -314,15 +315,59 @@ class IndexController extends Controller
 
     function test2(){
         $xs = new XS("demo");
-        $tokenizer = new XSTokenizerScws;   // 直接创建实例
-
-        $text = '迅搜(xunsearch)是优秀的开源全文检索解决方案';
-        $tokenizer->setIgnore();
-        $tokenizer->setDuality();
-        $tokenizer->setMulti(3);
-
-        $words = $tokenizer->getTops($text,3,'n,v,vn');
-        dd($words);
+//        $tokenizer = new XSTokenizerScws;   // 直接创建实例
+//
+//        $text = '她竟与杨童舒、王丽坤“共伺”一夫？如今人老珠黄的她险被抛弃';
+//        $tokenizer->setIgnore();
+//        $tokenizer->setDuality();
+//        $tokenizer->setMulti(3);
+////        $words = $tokenizer->getResult($text);
+//        $words = $tokenizer->getTops($text,10,'n,@,i,v,vn');
+//        dd($words);
+//        $xs->index->clean();
+        $xs->index->flushIndex();
     }
+
+    function test3() {
+        $id = 10;
+        $xs = new XS("demo");
+        $doc = new XSDocument;  // 使用默认字符集
+
+        for ($index =1; $index <=$id; $index ++) {
+            echo $index;
+            echo PHP_EOL;
+            $data = DB::table('toutiao_article_list as a')
+                ->leftJoin('toutiao_author as b', 'b.author_id', '=', 'a.author_id')
+                ->leftJoin('toutiao_article_category as c', 'c.category_id','=', 'a.category_id')
+                ->select('a.id as article_id',
+                    'c.name as category',
+                    'a.title',
+                    'a.abstract',
+                    'a.create_date',
+                    'b.author_id',
+                    'b.name as author',
+                    'a.article_table_tag',
+                    'a.article_id as article_table_id')
+                ->where('a.id', $index)
+                ->first();
+            $article = DB::table("toutiao_article_0{$data->article_table_tag}")->where('id',$data->article_table_id)->first();
+            $data->article=$article->article;
+            $data->create_date = strtotime($data->create_date) + mt_rand(60, 1800);
+            print $data->create_date;
+            echo PHP_EOL;
+            print date('Y-m-d H:i:s', $data->create_date);
+            echo PHP_EOL;
+            $temp = [];
+            foreach ($data as $k=>$v ){
+                $temp[$k] = $v;
+            }
+            $doc->setFields($temp);
+            $xs->index->update($doc);
+        }
+        $xs->index->flushIndex();
+//        $data = DB::table('toutiao_article_list')->count();
+//        print_r($data);
+    }
+
 
 }

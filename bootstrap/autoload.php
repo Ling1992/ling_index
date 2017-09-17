@@ -1,7 +1,7 @@
 <?php
 
 define('LARAVEL_START', microtime(true));
-define('XS_APP_ROOT', '../config');
+define('XS_APP_ROOT', dirname(dirname(__FILE__)). '/config');
 
 /*
 |--------------------------------------------------------------------------

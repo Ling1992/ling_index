@@ -23,13 +23,7 @@ class ImageController extends Controller
         $url = $request->input("url", asset('img/blank.gif'));
 //        Log::info('ling',[$request->server()]);
         Log::info('ling',[$url]);
-//
         $modified_time = $request->server('HTTP_IF_MODIFIED_SINCE');
-//        Log::info('ling', [gmdate("D, d M Y H:i:s ",time())]);
-//        Log::info('ling', [$modified_time]);
-//
-//        Log::info('ling', [strtotime($modified_time)]);
-//        Log::info('ling', [time()]);
 
         if ($modified_time) {
             $modified_time_sec = strtotime($modified_time);
@@ -49,7 +43,6 @@ class ImageController extends Controller
             Cache::put($strUrlMd5,$data, 60*24);  // 12小时
             $image_data = $data;
         }
-
 
         return response($image_data)->withHeaders([
             'Last-Modified'=>gmdate("D, d M Y H:i:s \G\M\T",time()),

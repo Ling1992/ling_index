@@ -32,6 +32,10 @@ class IndexController extends Controller
      */
     public function __construct()
     {
+
+
+
+
         // 菜单导航 列表
         $this->category = Cache::get('category');
         $this->category_list = Cache::get('category_list');
@@ -272,36 +276,26 @@ class IndexController extends Controller
 
     function test()
     {
+        // 1 分类查询
+        // 2 按id查询
+        //
         $xs = new XS("demo");
-
-        $data = [
-            'article_id'=>1,
-            'category'=>'娱乐',
-            'title'=>'标题啊啊啊啊啊啊标题',
-            'article'=>'内容， --阿斯蒂芬拉时代峻峰阿斯顿飞机啦； 啊；的按键锁定量啊大家 l',
-            'create_date'=>12312312,
-            'author'=>'ling',
-            'author_id'=>11
-        ];
-
         $doc = new XSDocument;  // 使用默认字符集
 
-        for ($i=0; $i<= 200; $i ++) {
+        $xs->search->setSort('create_date',false);
 
-            $data = [
-                'article_id'=>$i,
-                'category'=>'娱乐',
-                'title'=>'标题啊啊啊啊啊啊标题',
-                'article'=>'内容， --阿斯蒂芬拉时代峻峰阿斯顿飞机啦； 啊；的按键锁定量啊大家 l',
-                'create_date'=>12312312,
-                'author'=>'ling1111',
-                'author_id'=>11,
-                'ling'=>'ling'
-            ];
-            $doc->setFields($data);
-            $xs->index->update($doc);
+        $xs->search->setQuery("category:娱乐");
+//        $xs->search->setFacets("category");
+        $docs = $xs->search->search();
+        $count = $xs->search->getLastCount();
+
+        foreach ($docs as $v) {
+            echo date('Y-m-d H:i:s', $v->f("create_date"));
+            echo "<br />";
         }
-        $xs->index->flushIndex();
+        echo $count;
+        dd($docs);
+
     }
 
     function test1(){
@@ -325,7 +319,7 @@ class IndexController extends Controller
 //        $words = $tokenizer->getTops($text,10,'n,@,i,v,vn');
 //        dd($words);
 //        $xs->index->clean();
-        $xs->index->flushIndex();
+//        $xs->index->flushIndex();
     }
 
     function test3() {

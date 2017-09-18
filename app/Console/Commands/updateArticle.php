@@ -47,9 +47,14 @@ class updateArticle extends Command
         $xs = new XS("demo");
         $doc = new XSDocument;  // 使用默认字符集
 
-        $das = $xs->search->setLimit(1)->setSort('article')->search("");
+        $start_id = $xs->search->count("");
 
-        $start_id = $das[0]->article_id;
+        $end_id = $id;
+
+        $this->info($start_id);
+        $this->info($end_id);
+
+
         if (! is_numeric($start_id)) {
             exit('start _id 不是数字');
         }
@@ -57,17 +62,12 @@ class updateArticle extends Command
             exit('start _id 小于 10000');
         }
 
-        $end_id = $id;
-
         if (! is_numeric($end_id)) {
             exit('end _id 不是数字');
         }
         if ($end_id <= 10000) {
             exit('end _id 小于 10000');
         }
-
-        $this->info($start_id);
-        $this->info($end_id);
 
         $update_file = base_path('update_file.log');
 
@@ -104,8 +104,8 @@ class updateArticle extends Command
                 $temp[$k] = $v;
             }
             $doc->setFields($temp);
-            $xs->index->update($doc, true);
-            sleep(1);
+            $xs->index->update($doc);
+//            sleep(1);
         }
         $xs->index->flushIndex();
     }

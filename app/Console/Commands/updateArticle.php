@@ -55,6 +55,7 @@ class updateArticle extends Command
                 ->select('a.id as article_id',
                     'c.name as category',
                     'a.title',
+                    'a.image_url as title_image',
                     'a.abstract',
                     'a.create_date',
                     'b.author_id',

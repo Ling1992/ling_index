@@ -44,10 +44,7 @@ class updateArticle extends Command
     {
         $id = DB::table('toutiao_article_list')->max('id');
 
-        $xs = new XS("demo");
-        $doc = new XSDocument;  // 使用默认字符集
-
-        $start_id = $xs->search->count("");
+        $start_id = DB::table('update_index')->max('index_id');
 
         $end_id = $id;
 
@@ -74,6 +71,10 @@ class updateArticle extends Command
         if (!file_exists($update_file)) {
             exit('update_file 不存在 ！！！');
         }
+
+        $xs = new XS("demo");
+        $doc = new XSDocument;  // 使用默认字符集
+
         for ( $index = $start_id;$index <=$end_id; $index ++) {
             if (!file_exists($update_file)) {
                 $this->info('update_file 不存在 ！！！');
@@ -105,6 +106,12 @@ class updateArticle extends Command
             }
             $doc->setFields($temp);
             $xs->index->update($doc);
+
+            $res = DB::table('update_index')->increment('index_id');
+            if ($res === 1) {
+            }else {
+                exit('update_index  更新失败！！！');
+            }
 //            sleep(1);
         }
         $xs->index->flushIndex();

@@ -1,7 +1,15 @@
 @extends('base.base')
 
+@section('keywords')
+    {{ $data->f('keyWord') }}
+@endsection
+
+@section('des')
+    {{ filterTitle($data->f('article_id'),$data->f('title')) }}
+@endsection
+
 @section('title')
-    {{ filterTitle($data->id,$data->title) }}
+    {{ filterTitle($data->f('article_id'),$data->f('title')) }}
     -
     @parent
 @endsection

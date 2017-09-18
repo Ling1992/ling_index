@@ -42,12 +42,43 @@ class updateArticle extends Command
      */
     public function handle()
     {
-        $id = 103493;
-//        $id = 10;
+        $id = DB::table('toutiao_article_list')->max('id');
+
         $xs = new XS("demo");
         $doc = new XSDocument;  // 使用默认字符集
 
-        for ($index =1; $index <=$id; $index ++) {
+        $das = $xs->search->setLimit(1)->setSort('article')->search("");
+
+        $start_id = $das[0]->article_id;
+        if (! is_numeric($start_id)) {
+            exit('start _id 不是数字');
+        }
+        if ($start_id <= 10000) {
+            exit('start _id 小于 10000');
+        }
+
+        $end_id = $id;
+
+        if (! is_numeric($end_id)) {
+            exit('end _id 不是数字');
+        }
+        if ($end_id <= 10000) {
+            exit('end _id 小于 10000');
+        }
+
+        $this->info($start_id);
+        $this->info($end_id);
+
+        $update_file = base_path('update_file.log');
+
+        if (!file_exists($update_file)) {
+            exit('update_file 不存在 ！！！');
+        }
+        for ( $index = $start_id;$index <=$end_id; $index ++) {
+            if (!file_exists($update_file)) {
+                $this->info('update_file 不存在 ！！！');
+                break;
+            }
             $this->info($index);
             $data = DB::table('toutiao_article_list as a')
                 ->leftJoin('toutiao_author as b', 'b.author_id', '=', 'a.author_id')
@@ -64,15 +95,17 @@ class updateArticle extends Command
                     'a.article_id as article_table_id')
                 ->where('a.id', $index)
                 ->first();
+
             $article = DB::table("toutiao_article_0{$data->article_table_tag}")->where('id',$data->article_table_id)->first();
             $data->article=$article->article;
-            $data->create_date = strtotime($data->create_date) + mt_rand(60, 1800);
+            $data->create_date = strtotime($data->create_date) + mt_rand(60, 120);
             $temp = [];
             foreach ($data as $k=>$v ){
                 $temp[$k] = $v;
             }
             $doc->setFields($temp);
             $xs->index->update($doc, true);
+            sleep(1);
         }
         $xs->index->flushIndex();
     }

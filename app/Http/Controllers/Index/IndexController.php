@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Cache;
 use GuzzleHttp\Client;
 use XS;
 use XSDocument;
+use XSTokenizerScws;
 
 class IndexController extends Controller
 {
@@ -159,6 +160,7 @@ class IndexController extends Controller
     function article($id){
 
         $xs = new XS("demo");
+        $tokenizer = new XSTokenizerScws;
 
         $xs->setScheme($this->getXSFieldScheme(true));
 
@@ -174,6 +176,17 @@ class IndexController extends Controller
                 $category = $k;
             }
         }
+
+        $top = $tokenizer->getTops($data->f('title'), 5, 'n,v,vn');
+
+        $temp = [];
+
+        if (count($top) >=1 ) {
+            foreach ($top as $v) {
+                $temp[] = $v['word'];
+            }
+        }
+        $data->setFields(['keyWord'=>implode(', ', $temp)]);
 
         return view('Index.article')
             ->with('data',$data)
@@ -249,25 +262,26 @@ class IndexController extends Controller
         //
 
         $id = 103477;
-        $xs = new XS("demo");
+        $xs = new XS("test");
         $doc = new XSDocument;  // 使用默认字符集
+        $xs->index->flushIndex();
 
         $xs->getAllFields();
-        $xs->setScheme($this->getXSFieldScheme(true));
+//        $xs->setScheme($this->getXSFieldScheme(true));
 
-        $xs->search->setLimit(1);
+        $xs->search->setLimit(100);
 
-        $xs->search->setQuery("article_id:".$id);
+//        $xs->search->setQuery("article_id:".$id);
 //        $xs->search->setQuery("");
 //        $xs->search->setFacets("category");
         $docs = $xs->search->search();
         $count = $xs->search->getLastCount();
 
-        foreach ($docs as $v) {
+//        foreach ($docs as $v) {
 //            echo date('Y-m-d H:i:s', $v->f("create_date"));
-            echo $v->f("create_date");
-            echo "<br />";
-        }
+//            echo $v->f("create_date");
+//            echo "<br />";
+//        }
         echo $count;
         dd($docs);
 
@@ -275,15 +289,15 @@ class IndexController extends Controller
 
     function test1(){
         $xs = new XS("demo");
-//        $xs->search->setLimit(500, 0);
-        $docs = $xs->search->search(); // 执行搜索，将搜索结果文档保存在 $docs 数组中
-        $count = $xs->search->count(); // 获取搜索结果的匹配总数估算值
-        print_r($count);
-        dd($docs);
+        $tokenizer = new XSTokenizerScws;
+        $tops = $tokenizer->getTops("因不生育而领养的6大女星，她领养后成功怀孕，却把领养孩子转让", 5, 'n,v,vn');
+
+        dd($tops);
+        echo implode(', ', $tops);
     }
 
     function test2(){
-        $xs = new XS("demo");
+        $xs = new XS("test");
 //        $tokenizer = new XSTokenizerScws;   // 直接创建实例
 //
 //        $text = '她竟与杨童舒、王丽坤“共伺”一夫？如今人老珠黄的她险被抛弃';

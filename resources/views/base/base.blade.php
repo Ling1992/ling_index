@@ -14,8 +14,8 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <meta name="keywords" content="57早知道, 早知道, 早知道网, 57新闻, 早知道新闻, 57早知道官网">
-    <meta name="description" content="57早知道, 致力于分享各种类型的好文章给大家">
+    <meta name="keywords" content="@section('keywords')57早知道, 早知道, 早知道网, 57新闻, 早知道新闻, 57早知道官网@show">
+    <meta name="description" content="@section('des')57早知道, 致力于分享各种类型的好文章给大家@show">
 
     <title>
         @section('title')

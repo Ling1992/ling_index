@@ -10,22 +10,19 @@ namespace App\Http\Controllers\Index;
 
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use GuzzleHttp\Client;
 use XS;
 use XSDocument;
-use XSException;
-use XSTokenizerScws;
 
 class IndexController extends Controller
 {
-    private $category;
     private $recommendation;
     private $category_list;
     private $movie_list;
+    private $paginator;
 
     /**
      * IndexController constructor.
@@ -33,38 +30,52 @@ class IndexController extends Controller
     public function __construct()
     {
 
-
-
-
         // 菜单导航 列表
-        $this->category = Cache::get('category');
-        $this->category_list = Cache::get('category_list');
-        if (!$this->category) {
-            $this->category = DB::table('index_article_category')->where('state',1)->orderBy('sort')->get();
-            foreach ($this->category as $value) {
-                $this->category_list[$value->word] = $value->name;
-            }
-            Cache::put('category',$this->category, 60*12);  // 12小时
-            Cache::put('category_list',$this->category_list, 60*12);  // 12小时
-            Log::info('1');
-        }
+        $this->category_list = [
+            'new'=>['key'=>'娱乐','name'=>'最新娱乐'],
+            'food'=>['key'=>'美食','name'=>'美食'],
+            'game'=>['key'=>'游戏','name'=>'游戏'],
+            'fashion'=>['key'=>'时尚','name'=>'时尚'],
+            'travel'=>['key'=>'旅游','name'=>'旅游'],
+            'photography'=>['key'=>'摄影','name'=>'摄影'],
+            'funny'=>['key'=>'搞笑','name'=>'搞笑'],
+            'comic'=>['key'=>'动漫','name'=>'动漫'],
+            'emotion'=>['key'=>'情感','name'=>'情感'],
+//            'story'=>['key'=>'故事','name'=>'故事'],
+//            'sports'=>['key'=>'体育','name'=>'体育'],
+//            'car'=>['key'=>'汽车','name'=>'汽车'],
+//            'science_all'=>['key'=>'科学','name'=>'科学'],
+//            'baby'=>['key'=>'育儿','name'=>'育儿'],
+//            'digital'=>['key'=>'数码','name'=>'数码'],
+//            'design'=>['key'=>'设计','name'=>'设计'],
+//            'tech'=>['key'=>'科技','name'=>'科技'],
+//            'house'=>['key'=>'房产','name'=>'房产'],
+//            'edu'=>['key'=>'教育','name'=>'教育'],
+//            'culture'=>['key'=>'文化','name'=>'文化'],
+//            'psychology'=>['key'=>'心理','name'=>'心理'],
+            'astrology'=>['key'=>'星座','name'=>'星座'],
+//            'career'=>['key'=>'心理','name'=>'心理'],
+            'pet'=>['key'=>'宠物','name'=>'宠物'],
+//            'home'=>['key'=>'家居','name'=>'家居'],
+            'beauty'=>['key'=>'美女','name'=>'美女'],
+//            'movie'=>['key'=>'电影','name'=>'电影'],
+//            'wedding'=>['key'=>'婚嫁','name'=>'婚嫁'],
+        ];
+
+        $this->paginator = $paginator = new Paginator(null,20);
+
         //  阅读推荐
         $this->recommendation = Cache::get('recommendation');
         if (!$this->recommendation) {
-            // 首页 category 详细列表
-            $category_index_list= Cache::get('category_index_list');
-            if (!$category_index_list) {
-                $category_index_list = DB::table('relation_category')->where('index_id','=', 1)->pluck('category_id');
-                Cache::put('category_index_list',$category_index_list,60*12);
-                Log::info('2');
-            }
-            $this->recommendation = DB::table('toutiao_article_list')
-                ->whereIn('category_id',$category_index_list?:[])
-                ->orderBy('create_date','desc')
-                ->limit(5)
-                ->get();
-            Cache::put('recommendation',$this->recommendation, 60*12);
-            Log::info('3');
+            $xs = new XS("demo");
+
+            $xs->search->setSort('create_date',false);
+            $xs->search->setQuery("娱乐 OR 艳照 OR 明星");
+            $xs->search->setLimit(5);
+            $this->recommendation = $xs->search->search();
+
+            Cache::put('recommendation',$this->recommendation, 60*6); //6 小时
+
         }
         // 57-电影
         $this->movie_list = Cache::get('movie_list');
@@ -89,189 +100,146 @@ class IndexController extends Controller
 
     }
 
-    function index(Request $request){
+    function index(){
 
-        $input = $request->all();
-        Log::info('ling', $input);
+        $xs = new XS("demo");
 
-        // 首页 category 详细列表
-        $category_index_list= Cache::get('category_index_list');
-        if (!$category_index_list) {
-            $category_index_list = DB::table('relation_category')->where('index_id','=', 1)->pluck('category_id');
-            Cache::put('category_index_list',$category_index_list,60*12);
-            Log::info('4');
-        }
+        $xs->search->setSort('create_date',false);
+        $xs->search->setQuery("category:".$this->category_list['new']['key']);
+//        $xs->search->setQuery("");
+        $xs->search->setLimit($this->paginator->perPage(),($this->paginator->currentPage() -1 ) * $this->paginator->perPage());
 
-        // 首页 第N页数据
-        $article_list = DB::table('toutiao_article_list as a')
-            ->leftJoin('toutiao_article_category as b', 'a.category_id','=','b.category_id')
-            ->whereIn('a.category_id',$category_index_list?:[])
-            ->orderBy('a.create_date','desc')
-            ->paginate(20);
+        $article_list = $xs->search->search();
+        $count = $xs->search->getLastCount();
+
+
+        $paginator =new LengthAwarePaginator($this->paginator->items(), $count, $this->paginator->perPage(), $this->paginator->currentPage(), [
+            'path' => Paginator::resolveCurrentPath(),
+            'pageName' => $this->paginator->getPageName(),
+        ]);
 
         return view('Index.index')
-            ->with('category_menu',$this->category)  //菜单栏
+            ->with('paginator', $paginator)
+            ->with('category_list',$this->category_list)  //菜单栏
             ->with('list',$article_list)  // 列表数据
             ->with('category','new')  // 类型 key
-            ->with('category_list',$this->category_list)  // 类型 key->name list
             ->with('recommendation', $this->recommendation) // 推荐
             ->with('movie_list', $this->movie_list) // 57-电影
             ;
     }
 
-    function category($category, Request $request){
+    function category($category){
 
-        $input = $request->all();
-        Log::info('ling', $input);
-        // category 详细列表
-        $category_list= Cache::get("category_{$category}_list");
-        if (!$category_list) {
-            $category_list = DB::table('relation_category as a')
-                ->leftJoin('index_article_category as b', 'a.index_id','=','b.category_index_id')
-                ->where('b.word','=', $category)
-                ->pluck('a.category_id');
-            Cache::put("category_{$category}_list",$category_list,60*12);
-            Log::info('7');
-        }
-        // 第N页数据
-        $article_list = DB::table('toutiao_article_list as a')
-            ->leftJoin('toutiao_article_category as b', 'a.category_id','=','b.category_id')
-            ->whereIn('a.category_id',$category_list?:[])
-            ->orderBy('a.create_date','desc')
-            ->paginate(20);
+
+        $xs = new XS("demo");
+
+        $xs->search->setSort('create_date',false);
+        $xs->search->setQuery("category:".$this->category_list[$category]['key']);
+//        $xs->search->setQuery("");
+        $xs->search->setLimit($this->paginator->perPage(),($this->paginator->currentPage() -1 ) * $this->paginator->perPage());
+
+        $article_list = $xs->search->search();
+        $count = $xs->search->getLastCount();
+
+        $paginator =new LengthAwarePaginator($this->paginator->items(), $count, $this->paginator->perPage(), $this->paginator->currentPage(), [
+            'path' => Paginator::resolveCurrentPath(),
+            'pageName' => $this->paginator->getPageName(),
+        ]);
 
         return view('Index.index')
-            ->with('category_menu', $this->category)  //菜单栏
-            ->with('list',$article_list)
-            ->with('category',$category)
-            ->with('category_list',$this->category_list)
-            ->with('recommendation', $this->recommendation)
+            ->with('paginator', $paginator)
+            ->with('category_list',$this->category_list)  //菜单栏
+            ->with('list',$article_list)  // 列表数据
+            ->with('category', $category)  // 类型 key
+            ->with('recommendation', $this->recommendation) // 推荐
             ->with('movie_list', $this->movie_list) // 57-电影
             ;
     }
 
     function article($id){
 
-        $data = Cache::get('article_l_'.$id);
-        if (!$data) {
-            $data = DB::table('toutiao_article_list as a')
-                ->leftJoin('toutiao_author as b', 'b.author_id', '=', 'a.author_id')
-                ->where('a.id', $id?: 0)
-                ->first();
+        $xs = new XS("demo");
 
-            abort_if(!$data,404,'not found article info');
-            $article = DB::table("toutiao_article_0{$data->article_table_tag}")->where('id',$data->article_id)->first();
-            abort_if(!$article,404, 'not found article ');
-            $data->article=filterArticle($id?: 0,$article->article);
+        $xs->setScheme($this->getXSFieldScheme(true));
 
-            Cache::put('article_l_'.$id,$data, 60*24*2);
-        }
+        $xs->search->setQuery("article_id:".$id);
+        $xs->search->setLimit(1);
 
-        $category = Cache::get('article_c_'.$data->category_id);
-        if (!$category) {
-            $aa = DB::table('relation_category as a')
-                ->leftJoin('index_article_category as b', 'b.category_index_id', '=', 'a.index_id')
-                ->where('a.category_id', $data->category_id)
-                ->where('b.state',1)
-                ->groupBy('a.index_id')
-                ->pluck('word');
-            if (count($aa) >=2) {
-                foreach ($aa as $item){
-                    if ($item == 'new') {
-                        continue;
-                    }
-                    $category = $item;
-                }
-            }elseif (count($aa) > 0) {
-                $category = $aa[0];
-            }else {
-                $category = 'new';
+        $article_list = $xs->search->search();
+        $data = $article_list[0];
+
+        $category = 'new';
+        foreach ($this->category_list as $k => $v) {
+            if ($v['name'] == $data->f('category')) {
+                $category = $k;
             }
-            Cache::put('article_c_'.$data->category_id, 60*24*2);
         }
-
-
-        DB::table('toutiao_article_list')->where('id', $id?:0)->increment('click_amount');
 
         return view('Index.article')
-            ->with('category_menu',$this->category)  //菜单栏;
             ->with('data',$data)
-            ->with('category',$category)
-            ->with('category_list',$this->category_list)
-            ->with('recommendation', $this->recommendation)
+            ->with('category_list',$this->category_list)  //菜单栏
+            ->with('category', $category)  // 类型 key
+            ->with('recommendation', $this->recommendation) // 推荐
             ->with('movie_list', $this->movie_list) // 57-电影
             ;
+
     }
+
     function getList($like='') {
         $like_arr = explode('-', $like);
-        $article_list = [];
-        if ($like) {
-            foreach ($like_arr as $k=>$value) {
-                if ($k >=3) break;
-                $articles = DB::table('toutiao_article_list')
-                    ->where('category_id', 6)
-                    ->where('title', 'like', "%$value%")
-                    ->orWhere('abstract', 'like', "%$value%")
-                    ->select('id', 'title', 'image_url')
-                    ->orderBy('create_date','desc')
-                    ->limit(20)
-                    ->get();
-                $article_list = array_merge($article_list, $articles->all());
+
+        $sql_str = "";
+        if (count($like_arr) >= 1) {
+            foreach ($like_arr as $k=>$v) {
+                echo $v;
+                if ($k == 0) {
+                    $sql_str = $v;
+                }else {
+                    $sql_str = $sql_str . " OR " .$v;
+                }
             }
         }
 
-        $article_list_base = [];
-        $articles = DB::table('toutiao_article_list')
-            ->where('category_id', 6)
-            ->where('is_hot', 1)
-            ->select('id', 'title', 'image_url')
-            ->orderBy('create_date','desc')
-            ->limit(20)
-            ->get();
-        $article_list_base = array_merge($article_list_base, $articles->all());
+        $xs = new XS("demo");
 
-        $articles = DB::table('toutiao_article_list')
-            ->where('category_id', 6)
-            ->select('id', 'title', 'image_url')
-            ->orderBy('create_date','desc')
-            ->limit(20)
-            ->get();
-        $article_list_base = array_merge($article_list_base, $articles->all());
-        if ($article_list && count($article_list) <=20 ) {
-            $article_list_base = $this->array_obj_unique($article_list_base);
-            shuffle($article_list_base);
-            $article_list_base = array_slice($article_list_base, 0 , 10);
-        }else if ($article_list && count($article_list) <= 40) {
-            $article_list_base = $this->array_obj_unique($article_list_base);
-            shuffle($article_list_base);
-            $article_list_base = array_slice($article_list_base, 0 , 20);
-        }
-        $article_list = array_merge($article_list, $article_list_base);
+        $xs->setScheme($this->getXSFieldScheme());
+        $xs->search->setSort('create_date',false);
 
-        $article_list = $this->array_obj_unique($article_list);
-        shuffle($article_list);
-        $article_list = array_slice($article_list,0,20);
+        $xs->search->setQuery($sql_str);
+        $xs->search->setLimit(20);
+
+        $article_list = $xs->search->search();
+
         $data = [];
         foreach ($article_list as $k=>$item) {
-            $data[$k]['article_url'] = "http://www.vbaodian.cn/article/" . $item->id;
-            $data[$k]['image_url'] = urlFilter($item->image_url);
-            $data[$k]['title'] = filterTitle($item->id, $item->title);
+            $data[$k]['article_url'] = "http://www.vbaodian.cn/article/" . $item->f('article_id');
+            $data[$k]['image_url'] = urlFilter($item->f('title_image'));
+            $data[$k]['title'] = filterTitle($item->f('article_id'), $item->f('title'));
         }
 //        echo $like;
         return response($data, 200);
     }
 
-    private function array_obj_unique($data){
-        $temp = [];
-        foreach ($data as $v){
-            $temp[]=json_encode($v);
+
+    private function getXSFieldScheme($has_article = false){
+        $scheme = new \XSFieldScheme();
+
+        $scheme->addField('article_id', array('type' => 'id'));
+        $scheme->addField('category', array('index' => 'self', 'tokenizer' => 'full'));
+        $scheme->addField('title', array('type' => 'title'));
+        $scheme->addField('title_image', array('index' => 'none', 'tokenizer' => 'none'));
+        $scheme->addField('abstract', array('index' => 'none', 'tokenizer' => 'none'));
+
+        if ($has_article) {
+            $scheme->addField('article', array('type' => 'body', 'cutlen' => 0));
+        }else {
+            $scheme->addField('article', array('type' => 'body', 'cutlen' => 1));
         }
-        $temp=array_unique($temp);
-        $temp2 = [];
-        foreach ($temp as $v){
-            $temp2[] = json_decode($v);
-        }
-        return $temp2;
+
+        $scheme->addField('create_date', array('type' => 'numeric'));
+        $scheme->addField('author', array('index' => 'both'));
+        $scheme->addField('author_id');
+        return $scheme;
     }
 
     function test()
@@ -279,18 +247,25 @@ class IndexController extends Controller
         // 1 分类查询
         // 2 按id查询
         //
+
+        $id = 103477;
         $xs = new XS("demo");
         $doc = new XSDocument;  // 使用默认字符集
 
-        $xs->search->setSort('create_date',false);
+        $xs->getAllFields();
+        $xs->setScheme($this->getXSFieldScheme(true));
 
-        $xs->search->setQuery("category:娱乐");
+        $xs->search->setLimit(1);
+
+        $xs->search->setQuery("article_id:".$id);
+//        $xs->search->setQuery("");
 //        $xs->search->setFacets("category");
         $docs = $xs->search->search();
         $count = $xs->search->getLastCount();
 
         foreach ($docs as $v) {
-            echo date('Y-m-d H:i:s', $v->f("create_date"));
+//            echo date('Y-m-d H:i:s', $v->f("create_date"));
+            echo $v->f("create_date");
             echo "<br />";
         }
         echo $count;
@@ -318,50 +293,8 @@ class IndexController extends Controller
 ////        $words = $tokenizer->getResult($text);
 //        $words = $tokenizer->getTops($text,10,'n,@,i,v,vn');
 //        dd($words);
-//        $xs->index->clean();
+        $xs->index->clean();
 //        $xs->index->flushIndex();
     }
-
-    function test3() {
-        $id = 10;
-        $xs = new XS("demo");
-        $doc = new XSDocument;  // 使用默认字符集
-
-        for ($index =1; $index <=$id; $index ++) {
-            echo $index;
-            echo PHP_EOL;
-            $data = DB::table('toutiao_article_list as a')
-                ->leftJoin('toutiao_author as b', 'b.author_id', '=', 'a.author_id')
-                ->leftJoin('toutiao_article_category as c', 'c.category_id','=', 'a.category_id')
-                ->select('a.id as article_id',
-                    'c.name as category',
-                    'a.title',
-                    'a.abstract',
-                    'a.create_date',
-                    'b.author_id',
-                    'b.name as author',
-                    'a.article_table_tag',
-                    'a.article_id as article_table_id')
-                ->where('a.id', $index)
-                ->first();
-            $article = DB::table("toutiao_article_0{$data->article_table_tag}")->where('id',$data->article_table_id)->first();
-            $data->article=$article->article;
-            $data->create_date = strtotime($data->create_date) + mt_rand(60, 1800);
-            print $data->create_date;
-            echo PHP_EOL;
-            print date('Y-m-d H:i:s', $data->create_date);
-            echo PHP_EOL;
-            $temp = [];
-            foreach ($data as $k=>$v ){
-                $temp[$k] = $v;
-            }
-            $doc->setFields($temp);
-            $xs->index->update($doc);
-        }
-        $xs->index->flushIndex();
-//        $data = DB::table('toutiao_article_list')->count();
-//        print_r($data);
-    }
-
 
 }

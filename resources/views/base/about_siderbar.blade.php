@@ -24,23 +24,23 @@
     <ol class="list-unstyled">
         @foreach($recommendation as $r)
             <li class="row" style="margin: 0;">
-                @if($r->image_url)
+                @if($r->f('title_image'))
                     <div class="col-sm-4" style="padding: 0;margin: 0">
-                        <a target="_blank" href="/article/{{ $r->id }}" class="thumbnail">
-                            <img src="{{ asset('img/blank.gif') }}" data-echo="{{ env('img_src_pre','').urlFilter($r->image_url) }}">
+                        <a target="_blank" href="/article/{{ $r->f('article_id') }}" class="thumbnail">
+                            <img src="{{ asset('img/blank.gif') }}" data-echo="{{ env('img_src_pre','').urlFilter($r->f('title_image')) }}">
                         </a>
                     </div>
                     <div class="col-sm-8">
-                        <span><a target="_blank" href="/article/{{ $r->id }}">{{ filterTitle($r->id,$r->title) }}</a></span>
+                        <span><a target="_blank" href="/article/{{ $r->f('article_id') }}">{{ filterTitle($r->f('article_id'),$r->f('title')) }}</a></span>
                         <div class="">
-                            <p>{{ format_time($r->create_date) }}</p>
+                            <p>{{ format_time($r->f('create_date')) }}</p>
                         </div>
                     </div>
                 @else
                     <div class="row" style="margin: 0;">
-                        <span><a target="_blank" href="/article/{{ $r->id }}">{{ filterTitle($r->id,$r->title) }}</a></span>
+                        <span><a target="_blank" href="/article/{{ $r->f('article_id') }}">{{ filterTitle($r->f('article_id'),$r->f('title')) }}</a></span>
                         <div class="">
-                            <p>{{ format_time($r->create_date) }}</p>
+                            <p>{{ format_time($r->f('create_date')) }}</p>
                         </div>
                     </div>
                 @endif

@@ -13,7 +13,7 @@
 
         @if($category && $category != 'new')
             <li><a href="/">首页</a></li>
-            <li class="active">{{ $category_list[$category] }}</li>
+            <li class="active">{{ $category_list[$category]['name'] }}</li>
         @else
             <li class="active">首页</li>
         @endif
@@ -25,24 +25,24 @@
         <ul class="ling-list">
             @foreach($list as $l)
                 <li>
-                    @if($l->image_url)
+                    @if($l->f('title_image'))
                         <div class="ling-img-box">
-                            <a href="/article/{{ $l->id }}">
-                                <img src="{{ asset('img/blank.gif') }}" data-echo="{{ env('img_src_pre','').urlFilter($l->image_url) }}" style="background:#ccc  no-repeat center center" class="img-rounded">
+                            <a href="/article/{{ $l->f('article_id') }}" tabindex="-1">
+                                <img src="{{ asset('img/blank.gif') }}" data-echo="{{ env('img_src_pre','').urlFilter($l->f('title_image')) }}" style="background:#ccc  no-repeat center center" class="img-rounded">
                             </a>
                         </div>
                     @endif
                     <div class="ling-txt-box">
-                        <h3><a class="btn-link" href="/article/{{ $l->id }}">{{ filterTitle($l->id,$l->title) }}</a></h3>
-                        <p class="abstract">{{ filterAbstract($l->id,$l->abstract) }}</p>
+                        <h3><a class="btn-link" href="/article/{{ $l->f('article_id') }}" tabindex="-1">{{ filterTitle($l->f('article_id'),$l->f('title')) }}</a></h3>
+                        <p class="abstract">{{ filterAbstract($l->id,$l->f('abstract')) }}</p>
                         <div class="tips">
                             <p style="float:left; margin-right:10px">
                                 {{--<a >作者</a>--}}
                             </p>
                             {{--<a style="float:left; margin-right:30px">{{ $l->name }}</a>--}}
-                            <p style="float:left; margin-right:10px; color: black;">{{ $l->name }}</p>
-                            <p style="float: left; margin-right:10px;">{{ format_time($l->create_date) }}</p>
-                            <p style="float: left;"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> {{ $l->click_amount }} </p>
+                            <p style="float:left; margin-right:10px; color: black;">{{ $l->f('category') }}</p>
+                            <p style="float: left; margin-right:10px;">{{ format_time($l->f("create_date")) }}</p>
+                            {{--<p style="float: left;"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> {{ $l->click_amount }} </p>--}}
                         </div>
                     </div>
                 </li>
@@ -50,7 +50,7 @@
         </ul>
     </div> <!-- ling-list-box -->
     <div>
-        {{ $list->links('vendor/pagination/bootstrap-4') }}
+        {{ $paginator->links('vendor/pagination/bootstrap-4') }}
     </div>
 @endsection
 

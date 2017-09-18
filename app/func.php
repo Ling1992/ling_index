@@ -27,7 +27,7 @@ function format_time($dt=0)
     ];
 
     //创建对象
-    if( is_int($dt) ) {
+    if( is_numeric($dt) ) {
 
         $dt = Carbon\Carbon::createFromTimestamp($dt);
 

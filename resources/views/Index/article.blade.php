@@ -11,7 +11,7 @@
     <ol class="breadcrumb breadcrumb-ling">
         <li><a href="/">首页</a></li>
         @if($category && $category != 'new')
-            <li><a href="/category/{{ $category }}">{{ $category_list[$category] }}</a></li>
+            <li><a href="/category/{{ $category }}">{{ $category_list[$category]['name'] }}</a></li>
         @endif
         <li class="active">正文</li>
     </ol>
@@ -21,14 +21,13 @@
 @section('content')
 
     <div class="blog-post" style="position: relative">
-        <h2 class="blog-post-title">{{ filterTitle($data->id,$data->title) }}</h2>
-        <p class="blog-post-meta"> {{ $data->create_time }} </p>
+        <h2 class="blog-post-title">{{ filterTitle($data->f('article_id'),$data->f('title')) }}</h2>
+        <p class="blog-post-meta"> {{ date('Y-m-d H:i:s', $data->f('create_date')) }} </p>
         <div style="position: relative">
             <div style="display: block;">
-                {!! $data->article !!}
+                {!! $data->f('article') !!}
             </div>
             <p class="blog-post-meta">57早知道 ---------------------------------- </p>
-            <p class="blog-post-meta">{{ $data->create_date }}</p>
         </div>
     </div><!-- /.blog-post -->
 
@@ -63,21 +62,21 @@
         <ul class="ling-list">
             @foreach($recommendation as $l)
                 <li>
-                    @if($l->image_url)
+                    @if($l->f('title_image'))
                         <div class="ling-img-box">
-                            <a href="/article/{{ $l->id }}" class="thumbnail">
-                                <img src="{{ asset('img/blank.gif') }}" data-echo="{{ env('img_src_pre','').urlFilter($l->image_url) }}" style="background:#ccc  no-repeat center center">
+                            <a href="/article/{{ $l->f('article_id') }}" class="thumbnail">
+                                <img src="{{ asset('img/blank.gif') }}" data-echo="{{ env('img_src_pre','').urlFilter($l->f('title_image')) }}" style="background:#ccc  no-repeat center center">
                             </a>
                         </div>
                     @endif
                     <div class="ling-txt-box">
-                        <h3><a class="btn-link" href="/article/{{ $l->id }}">{{ filterTitle($l->id,$l->title) }}</a></h3>
-                        <p class="abstract">{{ filterAbstract($l->id,$l->abstract) }}</p>
+                        <h3><a class="btn-link" href="/article/{{ $l->f('article_id') }}">{{ filterTitle($l->f('article_id'),$l->f('title')) }}</a></h3>
+                        <p class="abstract">{{ filterAbstract($l->f('article_id'),$l->f('abstract')) }}</p>
                         <div class="tips">
                             {{--<a style="float:left; margin-right:30px">作者</a>--}}
                             {{--<a style="float:left; margin-right:30px">{{ $l->name }}</a>--}}
                             {{--<p style="float:left; margin-right:20px; color: black;">{{ $l->name }}</p>--}}
-                            <p style="float: left">{{ format_time($l->create_date) }}</p>
+                            <p style="float: left">{{ format_time($l->f('create_date')) }}</p>
                         </div>
                     </div>
                 </li>

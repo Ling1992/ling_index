@@ -33,7 +33,7 @@
         <p class="blog-post-meta"> {{ date('Y-m-d H:i:s', $data->f('create_date')) }} </p>
         <div style="position: relative">
             <div style="display: block;">
-                {!! $data->f('article') !!}
+                {!! filterArticle($data->f('article_id'), $data->f('article')) !!}
             </div>
             <p class="blog-post-meta">57早知道 ---------------------------------- </p>
         </div>

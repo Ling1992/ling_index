@@ -240,6 +240,8 @@ class IndexController extends Controller
             Cache::forget('title_'.$str);
             Cache::forget('abstract_'.$str);
             Cache::forget('article_'.$str);
+        }else if ($str == 'all') {
+            Cache::flush();
         }else {
             Cache::forget($str);
         }

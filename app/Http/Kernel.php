@@ -42,7 +42,8 @@ class Kernel extends HttpKernel
         ],
 
         'ling_index' => [
-            \App\Http\Middleware\CheckMobile::class,
+//            \App\Http\Middleware\CheckMobile::class,
+            \App\Http\Middleware\IpCollect::class,
            // \App\Http\Middleware\TestMiddleware::class,
         ],
     ];

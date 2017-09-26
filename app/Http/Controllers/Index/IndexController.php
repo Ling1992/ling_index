@@ -176,7 +176,7 @@ class IndexController extends Controller
                 $category = $k;
             }
         }
-
+        
         $top = $tokenizer->getTops($data->f('title'), 5, 'n,v,vn');
 
         $temp = [];
@@ -233,6 +233,29 @@ class IndexController extends Controller
         return response($data, 200);
     }
 
+    public function clearCache($str, $admin){
+        // 是否是纯数字
+        if ($admin != "ling") return "true";
+        if (is_numeric($str) || is_integer($str)) {
+            Cache::forget('title_'.$str);
+            Cache::forget('abstract_'.$str);
+            Cache::forget('article_'.$str);
+        }else {
+            Cache::forget($str);
+        }
+        return "true";
+
+    }
+
+    public function addIpToBlacklist($str, $admin) {
+        if ($admin != "ling") return "true";
+        $ips = explode(',', $str);
+        foreach ($ips as $ip){
+            if(!Cache::has('blacklist:'.$ip)) {
+                Cache::put('blacklist'.$ip, $ip, 60*12);  //12 小时
+            }
+        }
+    }
 
     private function getXSFieldScheme($has_article = false){
         $scheme = new \XSFieldScheme();
@@ -262,14 +285,15 @@ class IndexController extends Controller
         //
 
         $id = 103477;
-        $xs = new XS("test");
+        $xs = new XS("demo");
         $doc = new XSDocument;  // 使用默认字符集
         $xs->index->flushIndex();
 
-        $xs->getAllFields();
+//        $xs->getAllFields();
 //        $xs->setScheme($this->getXSFieldScheme(true));
-
-        $xs->search->setLimit(100);
+        $xs->search->setSort('create_date',false);
+//        $xs->search->setSort('article_id',false);
+        $xs->search->setLimit(10);
 
 //        $xs->search->setQuery("article_id:".$id);
 //        $xs->search->setQuery("");
@@ -297,7 +321,7 @@ class IndexController extends Controller
     }
 
     function test2(){
-        $xs = new XS("test");
+        $xs = new XS("demo");
 //        $tokenizer = new XSTokenizerScws;   // 直接创建实例
 //
 //        $text = '她竟与杨童舒、王丽坤“共伺”一夫？如今人老珠黄的她险被抛弃';
@@ -308,7 +332,7 @@ class IndexController extends Controller
 //        $words = $tokenizer->getTops($text,10,'n,@,i,v,vn');
 //        dd($words);
         $xs->index->clean();
-//        $xs->index->flushIndex();
+        $xs->index->flushIndex();
     }
 
 }

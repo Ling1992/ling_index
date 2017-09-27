@@ -19,6 +19,9 @@
         </div>
     </div>
 @endif
+<div class="sidebar-module sidebar-module-inset" style="margin-top: 10px">
+    <img src="{{ asset('img/57zzd_guide_guanzhu.png') }}" width="100%">
+</div>
 <div class="sidebar-module sidebar-module-inset">
     <h4>阅读推荐</h4>
     <ol class="list-unstyled">

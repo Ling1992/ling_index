@@ -37,6 +37,7 @@
             </div>
             <p class="blog-post-meta">57早知道 ---------------------------------- </p>
         </div>
+        <img src="{{ asset('img/57zzd_guide_guanzhu.png') }}">
     </div><!-- /.blog-post -->
 
 

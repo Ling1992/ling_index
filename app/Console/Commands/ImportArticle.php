@@ -14,7 +14,7 @@ class ImportArticle extends Command
      *
      * @var string
      */
-    protected $signature = 'command:name';
+    protected $signature = 'ImportArticle';
 
     /**
      * The console command description.

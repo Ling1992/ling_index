@@ -26,7 +26,7 @@ class IpCollect
         info($request->getRequestUri());
         info($request->userAgent());
 
-        if (Cache::has("blacklist:".$request->ip())) {
+        if (Cache::has("blacklist:".$request->ip()) || !$request->userAgent()) {
             return response("block", 503);
         }
         return $next($request);

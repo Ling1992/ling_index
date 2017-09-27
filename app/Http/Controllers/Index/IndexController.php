@@ -250,11 +250,17 @@ class IndexController extends Controller
     }
 
     public function addIpToBlacklist($str, $admin) {
-        if ($admin != "ling") return "true";
+
+        if ($admin != "ling") {
+            echo 'hello!!';
+            return "true";
+        }
+
         $ips = explode(',', $str);
         foreach ($ips as $ip){
             if(!Cache::has('blacklist:'.$ip)) {
-                Cache::put('blacklist'.$ip, $ip, 60*12);  //12 小时
+                Cache::put('blacklist:'.$ip, $ip, 60*12);  //12 小时
+                echo 'hello';
             }
         }
     }

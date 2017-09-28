@@ -15,7 +15,6 @@ use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Cache;
 use GuzzleHttp\Client;
 use XS;
-use XSDocument;
 use XSTokenizerScws;
 
 class IndexController extends Controller
@@ -24,6 +23,7 @@ class IndexController extends Controller
     private $category_list;
     private $movie_list;
     private $paginator;
+    private $xs;
 
     /**
      * IndexController constructor.
@@ -62,18 +62,18 @@ class IndexController extends Controller
 //            'movie'=>['key'=>'电影','name'=>'电影'],
 //            'wedding'=>['key'=>'婚嫁','name'=>'婚嫁'],
         ];
+        $this->xs = new XS('indexone');
 
         $this->paginator = $paginator = new Paginator(null,20);
 
         //  阅读推荐
         $this->recommendation = Cache::get('recommendation');
         if (!$this->recommendation) {
-            $xs = new XS("demo");
 
-            $xs->search->setSort('create_date',false);
-            $xs->search->setQuery("娱乐 OR 艳照 OR 明星");
-            $xs->search->setLimit(5);
-            $this->recommendation = $xs->search->search();
+            $this->xs->search->setSort('create_date',false);
+            $this->xs->search->setQuery("娱乐 OR 艳照 OR 明星");
+            $this->xs->search->setLimit(5);
+            $this->recommendation = $this->xs->search->search();
 
             Cache::put('recommendation',$this->recommendation, 60*6); //6 小时
 
@@ -103,15 +103,13 @@ class IndexController extends Controller
 
     function index(){
 
-        $xs = new XS("demo");
-
-        $xs->search->setSort('create_date',false);
-        $xs->search->setQuery("category:".$this->category_list['new']['key']);
+        $this->xs->search->setSort('create_date',false);
+        $this->xs->search->setQuery("category:".$this->category_list['new']['key']);
 //        $xs->search->setQuery("");
-        $xs->search->setLimit($this->paginator->perPage(),($this->paginator->currentPage() -1 ) * $this->paginator->perPage());
+        $this->xs->search->setLimit($this->paginator->perPage(),($this->paginator->currentPage() -1 ) * $this->paginator->perPage());
 
-        $article_list = $xs->search->search();
-        $count = $xs->search->getLastCount();
+        $article_list = $this->xs->search->search();
+        $count = $this->xs->search->getLastCount();
 
 
         $paginator =new LengthAwarePaginator($this->paginator->items(), $count, $this->paginator->perPage(), $this->paginator->currentPage(), [
@@ -131,16 +129,13 @@ class IndexController extends Controller
 
     function category($category){
 
-
-        $xs = new XS("demo");
-
-        $xs->search->setSort('create_date',false);
-        $xs->search->setQuery("category:".$this->category_list[$category]['key']);
+        $this->xs->search->setSort('create_date',false);
+        $this->xs->search->setQuery("category:".$this->category_list[$category]['key']);
 //        $xs->search->setQuery("");
-        $xs->search->setLimit($this->paginator->perPage(),($this->paginator->currentPage() -1 ) * $this->paginator->perPage());
+        $this->xs->search->setLimit($this->paginator->perPage(),($this->paginator->currentPage() -1 ) * $this->paginator->perPage());
 
-        $article_list = $xs->search->search();
-        $count = $xs->search->getLastCount();
+        $article_list = $this->xs->search->search();
+        $count = $this->xs->search->getLastCount();
 
         $paginator =new LengthAwarePaginator($this->paginator->items(), $count, $this->paginator->perPage(), $this->paginator->currentPage(), [
             'path' => Paginator::resolveCurrentPath(),
@@ -159,15 +154,14 @@ class IndexController extends Controller
 
     function article($id){
 
-        $xs = new XS("demo");
         $tokenizer = new XSTokenizerScws;
 
-        $xs->setScheme($this->getXSFieldScheme(true));
+        $this->xs->setScheme($this->getXSFieldScheme(true));
 
-        $xs->search->setQuery("article_id:".$id);
-        $xs->search->setLimit(1);
+        $this->xs->search->setQuery("article_id:".$id);
+        $this->xs->search->setLimit(1);
 
-        $article_list = $xs->search->search();
+        $article_list = $this->xs->search->search();
         $data = $article_list[0];
 
         $category = 'new';
@@ -213,15 +207,14 @@ class IndexController extends Controller
             }
         }
 
-        $xs = new XS("demo");
 
-        $xs->setScheme($this->getXSFieldScheme());
-        $xs->search->setSort('create_date',false);
+        $this->xs->setScheme($this->getXSFieldScheme());
+        $this->xs->search->setSort('create_date',false);
 
-        $xs->search->setQuery($sql_str);
-        $xs->search->setLimit(20);
+        $this->xs->search->setQuery($sql_str);
+        $this->xs->search->setLimit(20);
 
-        $article_list = $xs->search->search();
+        $article_list = $this->xs->search->search();
 
         $data = [];
         foreach ($article_list as $k=>$item) {
@@ -233,38 +226,6 @@ class IndexController extends Controller
         return response($data, 200);
     }
 
-    public function clearCache($str, $admin){
-        // 是否是纯数字
-        if ($admin != "ling") return "true";
-        if (is_numeric($str) || is_integer($str)) {
-            Cache::forget('title_'.$str);
-            Cache::forget('abstract_'.$str);
-            Cache::forget('article_'.$str);
-        }else if ($str == 'all') {
-            Cache::flush();
-        }else {
-            Cache::forget($str);
-        }
-        return "true";
-
-    }
-
-    public function addIpToBlacklist($str, $admin) {
-
-        if ($admin != "ling") {
-            echo 'hello!!';
-            return "true";
-        }
-
-        $ips = explode(',', $str);
-        foreach ($ips as $ip){
-            if(!Cache::has('blacklist:'.$ip)) {
-                Cache::put('blacklist:'.$ip, $ip, 60*12);  //12 小时
-                echo 'hello';
-            }
-        }
-    }
-
     private function getXSFieldScheme($has_article = false){
         $scheme = new \XSFieldScheme();
 
@@ -272,75 +233,19 @@ class IndexController extends Controller
         $scheme->addField('category', array('index' => 'self', 'tokenizer' => 'full'));
         $scheme->addField('title', array('type' => 'title'));
         $scheme->addField('title_image', array('index' => 'none', 'tokenizer' => 'none'));
-        $scheme->addField('abstract', array('index' => 'none', 'tokenizer' => 'none'));
+        $scheme->addField('abstract', array('index' => 'mixed'));
 
         if ($has_article) {
-            $scheme->addField('article', array('type' => 'body', 'cutlen' => 0));
+            $scheme->addField('article', array('index' => 'none', 'tokenizer' => 'none', 'cutlen' => 0));
         }else {
-            $scheme->addField('article', array('type' => 'body', 'cutlen' => 1));
+            $scheme->addField('article', array('index' => 'none', 'tokenizer' => 'none', 'cutlen' => 1));
         }
 
         $scheme->addField('create_date', array('type' => 'numeric'));
         $scheme->addField('author', array('index' => 'both'));
-        $scheme->addField('author_id');
+        $scheme->addField('author_id', array('index' => 'self', 'tokenizer' => 'none'));
         return $scheme;
     }
 
-    function test()
-    {
-        // 1 分类查询
-        // 2 按id查询
-        //
-
-        $id = 103477;
-        $xs = new XS("demo");
-        $doc = new XSDocument;  // 使用默认字符集
-        $xs->index->flushIndex();
-
-//        $xs->getAllFields();
-//        $xs->setScheme($this->getXSFieldScheme(true));
-        $xs->search->setSort('create_date',false);
-//        $xs->search->setSort('article_id',false);
-        $xs->search->setLimit(10);
-
-//        $xs->search->setQuery("article_id:".$id);
-//        $xs->search->setQuery("");
-//        $xs->search->setFacets("category");
-        $docs = $xs->search->search();
-        $count = $xs->search->getLastCount();
-
-//        foreach ($docs as $v) {
-//            echo date('Y-m-d H:i:s', $v->f("create_date"));
-//            echo $v->f("create_date");
-//            echo "<br />";
-//        }
-        echo $count;
-        dd($docs);
-
-    }
-
-    function test1(){
-        $xs = new XS("demo");
-        $tokenizer = new XSTokenizerScws;
-        $tops = $tokenizer->getTops("因不生育而领养的6大女星，她领养后成功怀孕，却把领养孩子转让", 5, 'n,v,vn');
-
-        dd($tops);
-        echo implode(', ', $tops);
-    }
-
-    function test2(){
-        $xs = new XS("demo");
-//        $tokenizer = new XSTokenizerScws;   // 直接创建实例
-//
-//        $text = '她竟与杨童舒、王丽坤“共伺”一夫？如今人老珠黄的她险被抛弃';
-//        $tokenizer->setIgnore();
-//        $tokenizer->setDuality();
-//        $tokenizer->setMulti(3);
-////        $words = $tokenizer->getResult($text);
-//        $words = $tokenizer->getTops($text,10,'n,@,i,v,vn');
-//        dd($words);
-        $xs->index->clean();
-        $xs->index->flushIndex();
-    }
 
 }

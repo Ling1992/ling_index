@@ -72,7 +72,7 @@ class updateArticle extends Command
             exit('update_file 不存在 ！！！');
         }
 
-        $xs = new XS("demo");
+        $xs = new XS("indexone");
         $doc = new XSDocument;  // 使用默认字符集
 
         for ( $index = $start_id;$index <=$end_id; $index ++) {

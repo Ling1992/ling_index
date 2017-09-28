@@ -28,9 +28,9 @@ Route::group(['middleware' => 'ling_index','namespace' => 'Index'], function(){
     // 接口
     Route::get('getList/{like?}','IndexController@getList');
     // 内部接口
-    Route::get('clearCache/{str}/{admin}', 'IndexController@clearCache')->where(['str' => '[0-9a-zA-Z]+', 'admin' => '[a-z]+']);
+    Route::get('clearCache/{str}/{admin}', 'AttachController@clearCache')->where(['str' => '[0-9a-zA-Z]+', 'admin' => '[a-z]+']);
     // 添加 ip 到 黑名单
-    Route::get('blacklist/addIp/{ips}/{admin}', 'IndexController@addIpToBlacklist')->where(['ips'=>'[0-9\.\,]+', 'admin'=>'[a-z]+']);
+    Route::get('blacklist/addIp/{ips}/{admin}', 'AttachController@addIpToBlacklist')->where(['ips'=>'[0-9\.\,]+', 'admin'=>'[a-z]+']);
 
 
 
@@ -39,7 +39,7 @@ Route::group(['middleware' => 'ling_index','namespace' => 'Index'], function(){
     Route::get('ipDetail/{ip}/{date}', 'adminController@detail')->where(['ip'=>'[0-9\.]+', 'date'=>'[0-9\-]+']);
 });
 
-//Route::get('/test', 'Index\IndexController@test');
+//Route::get('/test', 'Index\AttachController@test');
 
 Route::get('/image/{width}/{height}', 'Index\ImageController@index')->where(['width' => '[0-9]+', 'height' => '[0-9]+']);
 

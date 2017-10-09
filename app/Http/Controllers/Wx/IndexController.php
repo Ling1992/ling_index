@@ -8,7 +8,6 @@
 namespace App\Http\Controllers\Wx;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use GuzzleHttp\Client;
 
 class IndexController extends Controller
 {
@@ -38,16 +37,15 @@ class IndexController extends Controller
                            </xml>";
 
             //订阅事件
-            if ($postStr->Event == "subscribe") {
+            if ($postObj->Event == "subscribe") {
 
                 $msgType = "text";
-                $contentStr = "欢迎关注!!";
+                $contentStr = "欢迎关注!!获取汁源 回复名称即可[耶][耶] ！！";
                 $resultStr = sprintf($textTpl, $fromUsername, $toUsername, $time, $msgType, $contentStr);
 
                 echo $resultStr;
-            }
 
-            if (! empty($keyword)) {
+            }else if (! empty($keyword)) {
                 $msgType = "text";
                 $contentStr = "自动回复 --- 》 " ;  // 判断 是否 是电影 资讯 ！！
                 $resultStr = sprintf($textTpl, $fromUsername, $toUsername, $time, $msgType, $contentStr);

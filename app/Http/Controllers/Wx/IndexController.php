@@ -51,6 +51,7 @@ class IndexController extends Controller
                 $msgType = "text";
                 $contentStr = "自动回复 --- 》 " ;  // 判断 是否 是电影 资讯 ！！
                 $resultStr = sprintf($textTpl, $fromUsername, $toUsername, $time, $msgType, $contentStr);
+                echo $resultStr;
             }
         }
     }

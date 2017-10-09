@@ -85,12 +85,30 @@ class AttachController extends Controller
     }
 
     function test1(){
-        $xs = new XS("demo");
+        $xs = new XS("indexone");
         $tokenizer = new XSTokenizerScws;
-        $tops = $tokenizer->getTops("因不生育而领养的6大女星，她领养后成功怀孕，却把领养孩子转让", 5, 'n,v,vn');
+        $str = "“小马云”正式进军娱乐圈，出行有百万豪车接送，和马云不相上下";
+        $tops = $tokenizer->getTops($str, 5, 'n,nr,ns,nt,nz,v');
+        $temp = [];
+
+        if (count($tops) >=1 ) {
+            foreach ($tops as $v) {
+                $temp[] = $v['word'];
+            }
+        }
+        echo implode(', ', $temp);
+
+        $tops = $tokenizer->getResult($str);
+        $temp = [];
+
+        if (count($tops) >=1 ) {
+            foreach ($tops as $v) {
+                $temp[] = $v['word'];
+            }
+        }
+        echo implode(', ', $temp);
 
         dd($tops);
-        echo implode(', ', $tops);
     }
 
     function test2(){

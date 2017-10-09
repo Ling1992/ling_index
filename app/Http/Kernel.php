@@ -46,6 +46,9 @@ class Kernel extends HttpKernel
             \App\Http\Middleware\IpCollect::class,
            // \App\Http\Middleware\TestMiddleware::class,
         ],
+        'ling_wx' => [
+            \App\Http\Middleware\CheckSignature::class,
+        ],
     ];
 
     /**

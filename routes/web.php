@@ -39,7 +39,19 @@ Route::group(['middleware' => 'ling_index','namespace' => 'Index'], function(){
     Route::get('ipDetail/{ip}/{date}', 'adminController@detail')->where(['ip'=>'[0-9\.]+', 'date'=>'[0-9\-]+']);
 });
 
+Route::group(['middleware' => 'ling_wx','namespace' => 'Wx'], function(){
+
+    // 控制器在 "App\Http\Controllers\Wx" 命名空间下
+    Route::get('wx/api', 'IndexController@index');
+    Route::post('wx/api', 'IndexController@respondMSG');
+
+});
+
+
+
 //Route::get('/test', 'Index\AttachController@test');
+//Route::get('/test1', 'Index\AttachController@test1');
+//Route::get('/test2', 'Index\AttachController@test2');
 
 Route::get('/image/{width}/{height}', 'Index\ImageController@index')->where(['width' => '[0-9]+', 'height' => '[0-9]+']);
 

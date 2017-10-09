@@ -171,7 +171,7 @@ class IndexController extends Controller
             }
         }
         
-        $top = $tokenizer->getTops($data->f('title'), 5, 'n,v,vn');
+        $top = $tokenizer->getTops($data->f('title'), 5, 'n,nr,ns,nt,nz,v');
 
         $temp = [];
 
